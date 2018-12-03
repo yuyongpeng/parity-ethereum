@@ -11,12 +11,13 @@ no_persistent_txqueue = false
 
 [network]
 interface = "0.0.0.0"
-port = 33355
+port = 34567
 min_peers = 25
-max_peers = 50
+max_peers = 200
 nat = "any"
 id = 8887
-bootnodes = ["enode://ae9c75905487841e540363207bbeb053bd4704cdfdd5388a82091796563c5cc6f7f1cace5d0a5f5f2dbfbf6e377a98c7947c450ac02e298cc9e2a4e8029edffd@106.75.71.124:33355"]
+# bootnodes = ["enode://ae9c75905487841e540363207bbeb053bd4704cdfdd5388a82091796563c5cc6f7f1cace5d0a5f5f2dbfbf6e377a98c7947c450ac02e298cc9e2a4e8029edffd@106.75.71.124:33355"]
+bootnodes = ["enode://ae9c75905487841e540363207bbeb053bd4704cdfdd5388a82091796563c5cc6f7f1cace5d0a5f5f2dbfbf6e377a98c7947c450ac02e298cc9e2a4e8029edffd@192.168.0.177:34567"]
 discovery = true
 warp = true
 allow_ips = "all"
@@ -24,6 +25,42 @@ snapshot_peers = 0
 max_pending_peers = 64
 no_serve_light = false
 
+[mining]
+#"9f1ea1d6e584861ab3ca3bfa5dd678dafa95d965"
+#"073f20292c73dc8f3b144ef28519d179464c5bf8"
+#"7608213c8468dc111298a0ebd19191a5616861c8"
+#"b18a1c6efdcc03fece828250ce0608b1057a89d3"
+#"494c89fc4608d5529c31d3c33bbdb4e5d0e960fd"
+#"937f809bdfbd4e0aaaad0b3fc69a5f24516e5668"
+#"f12e5b669d537db90f90b3b951b975f93d8c8d4a"
+#"0aaac5b6e8410a2fc70416bb6de7589bd74ae75a"
+#"6a5ea30a451f8a42cb2d2508f46e61aa4aa8c5f9"
+#"742ca5bf31369b0c0aeabbb6401ca760e568e53e"
+
+author = "0xdeadbeefcafe0000000000000000000000000001"
+engine_signer = "0xdeadbeefcafe0000000000000000000000000001"
+force_sealing = true
+reseal_on_txs = "all"
+reseal_min_period = 4000
+reseal_max_period = 60000
+work_queue_size = 20
+relay_set = "cheap"
+usd_per_tx = "0.0025"
+usd_per_eth = "auto"
+price_update_period = "hourly"
+gas_floor_target = "4700000"
+gas_cap = "6283184"
+tx_queue_size = 8192
+tx_queue_gas = "off"
+tx_queue_strategy = "gas_factor"
+tx_queue_ban_count = 1
+tx_queue_ban_time = 180 #s
+tx_gas_limit = "6283184"
+tx_time_limit = 100 #ms
+extra_data = "Parity"
+remove_solved = false
+notify_work = ["http://localhost:3001"]
+refuse_service_transactions = false
 
 [rpc]
 disable = false
