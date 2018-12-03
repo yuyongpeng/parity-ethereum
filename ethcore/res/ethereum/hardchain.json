@@ -1,0 +1,80 @@
+{
+	"name": "hardchain",
+	"dataDir": "ethereum",
+	"engine": {
+		"Ethash": {
+			"params": {
+				"minimumDifficulty": "0x2000",
+				"difficultyBoundDivisor": "0x0800",
+				"durationLimit": "0x0d",
+				"blockReward": {
+					"0": "0x4563918244F40000",
+					"4370000": "0x29A2241AF62C0000"
+				},
+				"homesteadTransition": "0x118c30",
+				"difficultyBombDelays": {
+					"4370000": 3000000
+				}
+			}
+		}
+	},
+	"params": {
+		"gasLimitBoundDivisor": "0x0400",
+		"registrar" : "",
+		"accountStartNonce": "0x00",
+		"maximumExtraDataSize": "0x20",
+		"minGasLimit": "0x1388",
+		"networkID" : "0x123",
+		"maxCodeSize": 24576,
+		"maxCodeSizeTransition": 2675000
+	},
+	"genesis": {
+		"seal": {
+			"ethereum": {
+				"nonce": "0x0000000000000056",
+				"mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+			}
+		},
+		"difficulty": "0x2000",
+		"author": "0x0000000000000000000000000000000000000000",
+		"timestamp": "0x00",
+		"parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"extraData": "",
+		"gasLimit": "0x5f5e100"
+	},
+	"nodes": [
+		"enode://enode://56ec93bbdf4b6deaeb2f2dcb23d324e9581f306cc663245c775046523576650a8a52b5ddd7509d61611869c9653e1979f41a951e3521197b30844f20c509c98e@192.168.0.177:33355"
+	],
+	"accounts": {
+		"9f1ea1d6e584861ab3ca3bfa5dd678dafa95d965": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"073f20292c73dc8f3b144ef28519d179464c5bf8": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"7608213c8468dc111298a0ebd19191a5616861c8": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"b18a1c6efdcc03fece828250ce0608b1057a89d3": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"494c89fc4608d5529c31d3c33bbdb4e5d0e960fd": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"937f809bdfbd4e0aaaad0b3fc69a5f24516e5668": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"f12e5b669d537db90f90b3b951b975f93d8c8d4a": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"0aaac5b6e8410a2fc70416bb6de7589bd74ae75a": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"6a5ea30a451f8a42cb2d2508f46e61aa4aa8c5f9": {
+			"balance": "1000000005001001002003004005006"
+		},
+		"742ca5bf31369b0c0aeabbb6401ca760e568e53e": {
+			"balance": "1000000005001001002003004005006"
+		}
+	}
+}
