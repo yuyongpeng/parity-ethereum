@@ -26,16 +26,16 @@ max_pending_peers = 64
 no_serve_light = false
 
 [mining]
-#"9f1ea1d6e584861ab3ca3bfa5dd678dafa95d965"
-#"073f20292c73dc8f3b144ef28519d179464c5bf8"
-#"7608213c8468dc111298a0ebd19191a5616861c8"
-#"b18a1c6efdcc03fece828250ce0608b1057a89d3"
-#"494c89fc4608d5529c31d3c33bbdb4e5d0e960fd"
-#"937f809bdfbd4e0aaaad0b3fc69a5f24516e5668"
-#"f12e5b669d537db90f90b3b951b975f93d8c8d4a"
-#"0aaac5b6e8410a2fc70416bb6de7589bd74ae75a"
-#"6a5ea30a451f8a42cb2d2508f46e61aa4aa8c5f9"
-#"742ca5bf31369b0c0aeabbb6401ca760e568e53e"
+#"0xd43da923f1c1e2528eb09e9e0c9cf1024c892039"
+#"0x7b4c15ab17cc4ae230ebe84f800587df1d306bc7"
+#"0x2a1de6ccaa260125b764dd2f0d091106c66e919b"
+#"0x3d0c31c8a7069ce31602bdeb78408781f4ecdbc8"
+#"0x85614ff21a80e8043169a189018db0361dd199bb"
+#"0x46f604c9f74b149aa1d120731df02ab2b5724a8d"
+#"0x6963327159e5f022be28295db47ec19352a34f6e"
+#"0xdc62e4c9340f8497d45841187670e953d042f083"
+#"0xd38f42b94875d04a9bececf6d4f1df496604fa1d"
+#"0xeb4da11a2a31b2f852d1d4d5fb7ee8a59982a9cd"
 
 author = "0xdeadbeefcafe0000000000000000000000000001"
 engine_signer = "0xdeadbeefcafe0000000000000000000000000001"
@@ -51,10 +51,6 @@ price_update_period = "hourly"
 gas_floor_target = "4700000"
 gas_cap = "6283184"
 tx_queue_size = 8192
-tx_queue_gas = "off"
-tx_queue_strategy = "gas_factor"
-tx_queue_ban_count = 1
-tx_queue_ban_time = 180 #s
 tx_gas_limit = "6283184"
 tx_time_limit = 100 #ms
 extra_data = "Parity"
