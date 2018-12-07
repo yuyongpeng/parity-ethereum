@@ -652,6 +652,7 @@ pub fn execute<D: Dispatcher + 'static>(
 	payload: ConfirmationPayload,
 	pass: SignWith
 ) -> BoxFuture<WithToken<ConfirmationResponse>> {
+	trace!(target: "rpc", "request type is {}", payload);
 	match payload {
 		ConfirmationPayload::SendTransaction(request) => {
 			let condition = request.condition.clone().map(Into::into);

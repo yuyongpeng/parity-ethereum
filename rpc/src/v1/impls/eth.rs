@@ -471,6 +471,7 @@ impl<C, SN: ?Sized, S: ?Sized, M, EM, T: StateInfo + 'static> Eth for EthClient<
 		Ok(format!("{}", version))
 	}
 
+	// key logic for web3 eth interface implementation.
 	fn syncing(&self) -> Result<SyncStatus> {
 		use ethcore::snapshot::RestorationStatus;
 

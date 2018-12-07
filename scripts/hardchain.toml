@@ -37,8 +37,8 @@ no_serve_light = false
 #"0xd38f42b94875d04a9bececf6d4f1df496604fa1d"
 #"0xeb4da11a2a31b2f852d1d4d5fb7ee8a59982a9cd"
 
-author = "0xdeadbeefcafe0000000000000000000000000001"
-engine_signer = "0xdeadbeefcafe0000000000000000000000000001"
+author = ""
+engine_signer = ""
 force_sealing = true
 reseal_on_txs = "all"
 reseal_min_period = 4000
@@ -55,7 +55,7 @@ tx_gas_limit = "6283184"
 tx_time_limit = 100 #ms
 extra_data = "Parity"
 remove_solved = false
-notify_work = ["http://localhost:3001"]
+# notify_work = ["http://localhost:3001"]
 refuse_service_transactions = false
 
 [rpc]

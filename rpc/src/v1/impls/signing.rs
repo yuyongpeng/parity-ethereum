@@ -108,6 +108,7 @@ impl<D: Dispatcher + 'static> SigningQueueClient<D> {
 		}
 	}
 
+	// key logic for deal with deploy contract.
 	fn dispatch(&self, payload: RpcConfirmationPayload, default_account: DefaultAccount, origin: Origin) -> BoxFuture<DispatchResult> {
 		let accounts = self.accounts.clone();
 		let default_account = match default_account {
@@ -119,6 +120,7 @@ impl<D: Dispatcher + 'static> SigningQueueClient<D> {
 		Box::new(dispatch::from_rpc(payload, default_account, &dispatcher)
 			.and_then(move |payload| {
 				let sender = payload.sender();
+				trace!(target: "rpc-dispatch", "if account unlocked is {}", accounts.is_unlocked(&sender));
 				if accounts.is_unlocked(&sender) {
 					Either::A(dispatch::execute(dispatcher, accounts, payload, dispatch::SignWith::Nothing)
 						.map(|v| v.into_value())
