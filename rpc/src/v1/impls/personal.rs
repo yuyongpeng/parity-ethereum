@@ -111,6 +111,7 @@ impl<D: Dispatcher + 'static> Personal for PersonalClient<D> {
 	}
 
 	fn unlock_account(&self, account: RpcH160, account_pass: String, duration: Option<RpcU128>) -> Result<bool> {
+		trace!(target: "rpc", "try to unlock account {:?} with pass {:?}", account, account_pass);
 		let account: Address = account.into();
 		let store = self.accounts.clone();
 		let duration = match duration {
