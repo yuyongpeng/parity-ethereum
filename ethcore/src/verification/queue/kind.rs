@@ -100,6 +100,7 @@ pub mod blocks {
 			}
 		}
 
+		// verify block
 		fn verify(un: Self::Unverified, engine: &EthEngine, check_seal: bool) -> Result<Self::Verified, Error> {
 			let hash = un.hash();
 			match verify_block_unordered(un, engine, check_seal) {
@@ -216,6 +217,7 @@ pub mod headers {
 			}
 		}
 
+		// verify header
 		fn verify(unverified: Self::Unverified, engine: &EthEngine, check_seal: bool) -> Result<Self::Verified, Error> {
 			match check_seal {
 				true => engine.verify_block_unordered(&unverified,).map(|_| unverified),

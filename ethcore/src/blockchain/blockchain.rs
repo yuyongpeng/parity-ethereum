@@ -1066,6 +1066,7 @@ impl BlockChain {
 
 		let info = self.block_info(&block.header_view(), route, &extras);
 
+		// key logic reorg the blockchain according to max difficulty.
 		if let BlockLocation::BranchBecomingCanonChain(ref d) = info.location {
 			info!(target: "reorg", "Reorg to {} ({} {} {})",
 				Colour::Yellow.bold().paint(format!("#{} {}", info.number, info.hash)),
@@ -1595,6 +1596,8 @@ mod tests {
 			let parent_hash = header.parent_hash();
 			let parent_details = bc.block_details(&parent_hash).unwrap_or_else(|| panic!("Invalid parent hash: {:?}", parent_hash));
 			let block_total_difficulty = parent_details.total_difficulty + header.difficulty();
+			trace!(target: "casper", "new block difficulty is {} VS old best block difficulty is {}", block_total_difficulty, bc.best_block_total_difficulty());
+			// key logic compare difficulty
 			if block_total_difficulty > bc.best_block_total_difficulty() {
 				::engines::ForkChoice::New
 			} else {

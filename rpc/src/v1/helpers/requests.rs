@@ -43,6 +43,7 @@ pub struct TransactionRequest {
 
 /// Transaction request coming from RPC with default values filled in.
 #[derive(Debug, Clone, Default, Eq, PartialEq, Hash)]
+// key logic how to generate tx.
 pub struct FilledTransactionRequest {
 	/// Sender
 	pub from: Address,

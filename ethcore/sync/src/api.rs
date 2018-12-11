@@ -471,6 +471,7 @@ impl NetworkProtocolHandler for SyncProtocolHandler {
 		}
 	}
 
+	// key logic main driver for handle message.
 	fn timeout(&self, io: &NetworkContext, timer: TimerToken) {
 		trace_time!("sync::timeout");
 		let mut io = NetSyncIo::new(io, &*self.chain, &*self.snapshot_service, &self.overlay);
@@ -554,6 +555,7 @@ impl ChainNotify for EthSync {
 			_ => {},
 		}
 
+		// key logic set ethereum level message handler.
 		self.network.register_protocol(self.eth_handler.clone(), self.subprotocol_name, &[ETH_PROTOCOL_VERSION_62, ETH_PROTOCOL_VERSION_63])
 			.unwrap_or_else(|e| warn!("Error registering ethereum protocol: {:?}", e));
 		// register the warp sync subprotocol

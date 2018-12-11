@@ -58,6 +58,12 @@ fn fmt_err<F: ::std::fmt::Display>(f: F) -> String {
 	format!("Spec json is invalid: {}", f)
 }
 
+pub enum NodeType {
+	BootNode,
+	MinerNode,
+	DeviceNode,
+}
+
 /// Parameters common to ethereum-like blockchains.
 /// NOTE: when adding bugfix hard-fork parameters,
 /// add to `nonzero_bugfix_hard_fork`
@@ -416,6 +422,11 @@ pub struct Spec {
 
 	/// Genesis state as plain old data.
 	genesis_state: PodState,
+
+	// added parameter for hardchain
+	pub node_type: NodeType,
+	pub casper_address: Address,
+	pub fork_height: U256,
 }
 
 #[cfg(test)]
@@ -440,6 +451,10 @@ impl Clone for Spec {
 			constructors: self.constructors.clone(),
 			state_root_memo: RwLock::new(*self.state_root_memo.read()),
 			genesis_state: self.genesis_state.clone(),
+			// added parameter for hardchain
+			node_type: NodeType::BootNode,
+			casper_address: None,
+			fork_height: Default.default(),
 		}
 	}
 }
@@ -518,6 +533,8 @@ fn load_from(spec_params: SpecParams, s: ethjson::spec::Spec) -> Result<Spec, Er
 		None
 	};
 
+	trace!(target: "spce", "builtin accounts in spce {:?}", s.accounts);
+
 	let mut s = Spec {
 		name: s.name.clone().into(),
 		engine: Spec::engine(spec_params, s.engine, params, builtins),
@@ -541,6 +558,15 @@ fn load_from(spec_params: SpecParams, s: ethjson::spec::Spec) -> Result<Spec, Er
 			.collect(),
 		state_root_memo: RwLock::new(Default::default()), // will be overwritten right after.
 		genesis_state: s.accounts.into(),
+
+		// parameter for hardchain
+		node_type: match s.node_type.as_ref()  {
+			"miner" => NodeType::MinerNode,
+			"device" => NodeType::DeviceNode,
+			_ => NodeType::BootNode
+		},
+		casper_address: s.casper_address.map_or(0x00.into(), Into::into),
+		fork_height: s.fork_height.into()
 	};
 
 	// use memoized state root if provided.

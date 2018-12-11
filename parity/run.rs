@@ -166,6 +166,7 @@ type LightClient = ::light::client::Client<::light_helpers::EpochFetch>;
 
 // helper for light execution.
 fn execute_light_impl(cmd: RunCmd, logger: Arc<RotatingLogger>) -> Result<RunningClient, String> {
+	trace!(target: "main", "entry for execute light mode.");
 	use light::client as light_client;
 	use sync::{LightSyncParams, LightSync, ManageNetwork};
 	use parking_lot::{Mutex, RwLock};
@@ -363,6 +364,7 @@ fn execute_impl<Cr, Rr>(cmd: RunCmd, logger: Arc<RotatingLogger>, on_client_rq: 
 	where Cr: Fn(String) + 'static + Send,
 		Rr: Fn() + 'static + Send
 {
+	trace!(target: "main", "entry for execute full mode.");
 	// load spec
 	let spec = cmd.spec.spec(&cmd.dirs.cache)?;
 

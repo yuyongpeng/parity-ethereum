@@ -64,6 +64,7 @@ pub struct SyncHandler;
 
 impl SyncHandler {
 	/// Handle incoming packet from peer
+	// key logic dispatch message according to message type.
 	pub fn on_packet(sync: &mut ChainSync, io: &mut SyncIo, peer: PeerId, packet_id: u8, data: &[u8]) {
 		let rlp = Rlp::new(data);
 		let result = match packet_id {
@@ -208,6 +209,7 @@ impl SyncHandler {
 
 	/// Handles `NewHashes` packet. Initiates headers download for any unknown hashes.
 	pub fn on_peer_new_hashes(sync: &mut ChainSync, io: &mut SyncIo, peer_id: PeerId, r: &Rlp) -> Result<(), DownloaderImportError> {
+
 		if !sync.peers.get(&peer_id).map_or(false, |p| p.can_sync()) {
 			trace!(target: "sync", "Ignoring new hashes from unconfirmed peer {}", peer_id);
 			return Ok(());

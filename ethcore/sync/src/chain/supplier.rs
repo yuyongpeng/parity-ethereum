@@ -60,6 +60,7 @@ impl SyncSupplier {
 	pub fn dispatch_packet(sync: &RwLock<ChainSync>, io: &mut SyncIo, peer: PeerId, packet_id: u8, data: &[u8]) {
 		let rlp = Rlp::new(data);
 
+		// key logic for response data request from peer.
 		let result = match packet_id {
 			GET_BLOCK_BODIES_PACKET => SyncSupplier::return_rlp(io, &rlp, peer,
 				SyncSupplier::return_block_bodies,

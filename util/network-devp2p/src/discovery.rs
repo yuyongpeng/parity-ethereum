@@ -437,6 +437,7 @@ impl<'a> Discovery<'a> {
 		let node_id = recover(&signature.into(), &keccak(signed))?;
 		let packet_id = signed[0];
 		let rlp = Rlp::new(&signed[1..]);
+		// key logic DHT level protocol processing.
 		match packet_id {
 			PACKET_PING => self.on_ping(&rlp, &node_id, &from, &hash_signed),
 			PACKET_PONG => self.on_pong(&rlp, &node_id, &from),

@@ -272,6 +272,7 @@ impl<'x> OpenBlock<'x> {
 			engine: engine,
 		};
 
+		// key logic for casper implementation. should call casper init each 50 block.
 		r.block.header.set_parent_hash(parent.hash());
 		r.block.header.set_number(number);
 		r.block.header.set_author(author);
@@ -284,6 +285,7 @@ impl<'x> OpenBlock<'x> {
 		engine.machine().populate_from_parent(&mut r.block.header, parent, gas_floor_target, gas_ceil_target);
 		engine.populate_from_parent(&mut r.block.header, parent);
 
+		// key logic for casper implementation.
 		engine.machine().on_new_block(&mut r.block)?;
 		engine.on_new_block(&mut r.block, is_epoch_begin, ancestry)?;
 

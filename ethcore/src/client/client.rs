@@ -262,6 +262,8 @@ impl Importer {
 
 	/// This is triggered by a message coming from a block queue when the block is ready for insertion
 	pub fn import_verified_blocks(&self, client: &Client) -> usize {
+
+
 		// Shortcut out if we know we're incapable of syncing the chain.
 		if !client.enabled.load(AtomicOrdering::Relaxed) {
 			return 0;
@@ -291,6 +293,13 @@ impl Importer {
 				if is_invalid {
 					invalid_blocks.insert(hash);
 					continue;
+				}
+
+				// hardchain add verify miner's eth here.
+				if client.latest_balance(header.author()) <= 100_000.into() {
+					warn!(target: "client", " miner {:?} not enough eth to generate block", header.author());
+					invalid_blocks.insert(hash);
+					continue
 				}
 
 				match self.check_and_lock_block(block, client) {
@@ -468,6 +477,8 @@ impl Importer {
 	// it is for reconstructing the state transition.
 	//
 	// The header passed is from the original block data and is sealed.
+
+	// key logic commit block and update state
 	fn commit_block<B>(&self, block: B, header: &Header, block_data: encoded::Block, client: &Client) -> ImportRoute where B: Drain {
 		let hash = &header.hash();
 		let number = header.number();
@@ -2262,6 +2273,8 @@ impl PrepareOpenBlock for Client {
 		let h = best_header.hash();
 
 		let is_epoch_begin = chain.epoch_transition(best_header.number(), h).is_some();
+
+		// create a new block
 		let mut open_block = OpenBlock::new(
 			engine,
 			self.factories.clone(),
@@ -2303,6 +2316,7 @@ impl ScheduleInfo for Client {
 }
 
 impl ImportSealedBlock for Client {
+	// key logic commit block and update state
 	fn import_sealed_block(&self, block: SealedBlock) -> EthcoreResult<H256> {
 		let start = Instant::now();
 		let raw = block.rlp_bytes();

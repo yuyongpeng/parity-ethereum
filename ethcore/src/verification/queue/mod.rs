@@ -299,6 +299,7 @@ impl<K: Kind> VerificationQueue<K> {
 		state: Arc<(Mutex<State>, Condvar)>,
 		id: usize,
 	) {
+		// main logic for verify block.
 		loop {
 			// check current state.
 			{
@@ -358,6 +359,7 @@ impl<K: Kind> VerificationQueue<K> {
 			};
 
 			let hash = item.hash();
+			// key logic verify item.
 			let is_ready = match K::verify(item, &*engine, verification.check_seal) {
 				Ok(verified) => {
 					let mut verifying = verification.verifying.lock();

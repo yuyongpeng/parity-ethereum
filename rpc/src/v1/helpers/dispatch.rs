@@ -417,6 +417,7 @@ impl Dispatcher for LightDispatcher {
 	}
 }
 
+// key logic for sign tx.
 fn sign_transaction(
 	accounts: &AccountProvider,
 	filled: FilledTransactionRequest,

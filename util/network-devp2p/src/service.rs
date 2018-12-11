@@ -55,6 +55,7 @@ pub struct NetworkService {
 impl NetworkService {
 	/// Starts IO event loop
 	pub fn new(config: NetworkConfiguration, filter: Option<Arc<ConnectionFilter>>) -> Result<NetworkService, Error> {
+		trace!(target: "main", "network configuration as {:?}", config);
 		let host_handler = Arc::new(HostHandler { public_url: RwLock::new(None) });
 		let io_service = IoService::<NetworkIoMessage>::start()?;
 

@@ -1,6 +1,9 @@
 {
 	"name": "hardchain",
 	"dataDir": "ethereum",
+	"nodeType": "device/miner/boot",
+	"casperAddress": "",
+	"forkHeight": 0,
 	"engine": {
 		"Ethash": {
 			"params": {

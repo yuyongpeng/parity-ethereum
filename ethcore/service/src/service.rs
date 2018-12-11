@@ -141,6 +141,8 @@ impl ClientService {
 			client: client.clone(),
 			snapshot: snapshot.clone(),
 		});
+
+		// key logic register to io service
 		io_service.register_handler(client_io)?;
 
 		spec.engine.register_client(Arc::downgrade(&client) as _);
@@ -231,6 +233,7 @@ impl IoHandler<ClientIoMessage> for ClientIoHandler {
 		trace_time!("service::message");
 		use std::thread;
 
+		// key logic message got here and then dispatch.
 		match *net_message {
 			ClientIoMessage::BlockVerified => {
 				self.client.import_verified_blocks();

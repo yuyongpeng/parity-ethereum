@@ -33,6 +33,7 @@ pub struct BlockInfo {
 /// Describes location of newly inserted block.
 #[derive(Debug, Clone, PartialEq)]
 pub enum BlockLocation {
+	// key logic definition of block status. canon means main chain with max difficulty.
 	/// It's part of the canon chain.
 	CanonChain,
 	/// It's not a part of the canon chain.

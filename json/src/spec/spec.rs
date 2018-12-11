@@ -16,7 +16,9 @@
 
 //! Spec deserialization.
 
+use hash::Address;
 use std::io::Read;
+use uint::Uint;
 use serde_json;
 use serde_json::Error;
 use spec::{Params, Genesis, Engine, State, HardcodedSync};
@@ -57,6 +59,10 @@ pub struct Spec {
 	pub nodes: Option<Vec<String>>,
 	/// Hardcoded synchronization for the light client.
 	pub hardcoded_sync: Option<HardcodedSync>,
+	// added parameter for hardchain
+	pub node_type: String,
+	pub casper_address: Option<Address>,
+    pub fork_height: Uint,
 }
 
 impl Spec {

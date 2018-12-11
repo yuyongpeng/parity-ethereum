@@ -68,6 +68,7 @@ impl TrustedClient {
 	}
 
 	/// Transact contract.
+	// casper how to build tx from contract.
 	pub fn transact_contract(&self, contract: Address, tx_data: Bytes) -> Result<(), Error> {
 		let client = self.client.upgrade().ok_or_else(|| Error::Internal("cannot submit tx when client is offline".into()))?;
 		let miner = self.miner.upgrade().ok_or_else(|| Error::Internal("cannot submit tx when miner is offline".into()))?;
