@@ -460,7 +460,7 @@ impl Clone for Spec {
 			state_root_memo: RwLock::new(*self.state_root_memo.read()),
 			genesis_state: self.genesis_state.clone(),
 			// added parameter for hardchain
-			node_type: NodeType::BootNode,
+			node_type: self.node_type.clone(),
 		}
 	}
 }

@@ -47,6 +47,10 @@ pub struct Spec {
 	pub name: String,
 	/// Special fork name.
 	pub data_dir: Option<String>,
+
+	// added parameter for hardchain
+	/// Node type boot miner device.
+	pub node_type: String,
 	/// Engine.
 	pub engine: Engine,
 	/// Spec params.
@@ -59,8 +63,7 @@ pub struct Spec {
 	pub nodes: Option<Vec<String>>,
 	/// Hardcoded synchronization for the light client.
 	pub hardcoded_sync: Option<HardcodedSync>,
-	// added parameter for hardchain
-	pub node_type: String,
+
 }
 
 impl Spec {
