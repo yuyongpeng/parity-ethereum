@@ -2,8 +2,6 @@
 	"name": "hardchain",
 	"dataDir": "ethereum",
 	"nodeType": "device/miner/boot",
-	"casperAddress": "",
-	"forkHeight": 0,
 	"engine": {
 		"Ethash": {
 			"params": {
@@ -29,7 +27,9 @@
 		"minGasLimit": "0x1388",
 		"networkID" : "0x123",
 		"maxCodeSize": 24576,
-		"maxCodeSizeTransition": 2675000
+		"maxCodeSizeTransition": 2675000,
+		"casperAddress": "",
+		"forkHeight": 0
 	},
 	"genesis": {
 		"seal": {

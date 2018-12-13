@@ -61,8 +61,6 @@ pub struct Spec {
 	pub hardcoded_sync: Option<HardcodedSync>,
 	// added parameter for hardchain
 	pub node_type: String,
-	pub casper_address: Option<Address>,
-    pub fork_height: Uint,
 }
 
 impl Spec {

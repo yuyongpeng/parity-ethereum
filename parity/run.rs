@@ -536,6 +536,8 @@ fn execute_impl<Cr, Rr>(cmd: RunCmd, logger: Arc<RotatingLogger>, on_client_rq: 
 	client_config.queue.verifier_settings = cmd.verifier_settings;
 	client_config.transaction_verification_queue_size = ::std::cmp::max(2048, txpool_size / 4);
 	client_config.snapshot = cmd.snapshot_conf.clone();
+	// hardchain
+	client_config.node_type = spec.node_type.clone();
 
 	// set up bootnodes
 	let mut net_conf = cmd.net_conf;

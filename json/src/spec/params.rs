@@ -121,6 +121,12 @@ pub struct Params {
 	pub kip4_transition: Option<Uint>,
 	/// KIP6 activiation block height.
 	pub kip6_transition: Option<Uint>,
+
+	// hardchain.
+	/// casper address
+	pub casper_address: Option<Address>,
+	/// block number to apply casper
+	pub fork_height: Uint
 }
 
 #[cfg(test)]

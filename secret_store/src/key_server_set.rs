@@ -28,7 +28,7 @@ use types::{Error, Public, NodeAddress, NodeId};
 use trusted_client::TrustedClient;
 use {NodeKeyPair, ContractAddress};
 
-// key logic how to import contract from json.
+// key logic casper how to import contract from json.
 use_contract!(key_server, "res/key_server_set.json");
 
 /// Name of KeyServerSet contract in registry.

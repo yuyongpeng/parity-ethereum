@@ -20,6 +20,11 @@ use std::str::FromStr;
 use std::sync::atomic::{AtomicUsize, AtomicBool, Ordering as AtomicOrdering};
 use std::sync::{Arc, Weak};
 use std::time::{Instant, Duration};
+use std::fs::File;
+use std::path::Path;
+use std::io::prelude::*;
+use std::io;
+use byteorder::WriteBytesExt;
 
 // util
 use hash::keccak;
@@ -85,6 +90,7 @@ pub use types::blockchain_info::BlockChainInfo;
 pub use types::block_status::BlockStatus;
 pub use blockchain::CacheSize as BlockChainCacheSize;
 pub use verification::QueueInfo as BlockQueueInfo;
+use spec::NodeType;
 
 use_contract!(registry, "res/contracts/registrar.json");
 
@@ -485,6 +491,16 @@ impl Importer {
 		let parent = header.parent_hash();
 		let chain = client.chain.read();
 		let mut is_finalized = false;
+
+		// hardchain write block height in device.
+		let path = match client.config.node_type {
+			NodeType::DeviceNode => "/mnt/dphotos/parity/current_block_num.txt",
+			_ => "/data/parity/current_block_num.txt"
+		};
+
+		let mut file = File::create(Path::new(path)).unwrap();
+		file.write_fmt(format_args!("{}", number));
+		// file.write(number);
 
 		// Commit results
 		let block = block.drain();

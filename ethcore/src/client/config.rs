@@ -25,6 +25,7 @@ pub use std::time::Duration;
 pub use blockchain::Config as BlockChainConfig;
 pub use trace::Config as TraceConfig;
 pub use evm::VMType;
+pub use spec::NodeType;
 
 /// Client state db compaction profile
 #[derive(Debug, PartialEq, Clone)]
@@ -125,6 +126,9 @@ pub struct ClientConfig {
 	pub max_round_blocks_to_import: usize,
 	/// Snapshot configuration
 	pub snapshot: SnapshotConfiguration,
+
+	/// node type
+	pub node_type: NodeType,
 }
 
 impl Default for ClientConfig {
@@ -151,6 +155,7 @@ impl Default for ClientConfig {
 			transaction_verification_queue_size: 8192,
 			max_round_blocks_to_import: 12,
 			snapshot: Default::default(),
+			node_type: NodeType::BootNode,
 		}
 	}
 }

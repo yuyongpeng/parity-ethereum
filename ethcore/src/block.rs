@@ -47,11 +47,14 @@ use rlp::{Rlp, RlpStream, Encodable, Decodable, DecoderError, encode_list};
 use state_db::StateDB;
 use state::State;
 use trace::Tracing;
-use transaction::{UnverifiedTransaction, SignedTransaction, Error as TransactionError};
+use transaction::{Action, UnverifiedTransaction, Transaction, SignedTransaction, Error as TransactionError};
 use triehash::ordered_trie_root;
 use unexpected::{Mismatch, OutOfBounds};
 use verification::PreverifiedBlock;
 use vm::{EnvInfo, LastHashes};
+use ethkey::{KeyPair, Signature};
+
+use_contract!(casper, "res/contracts/casper.json");
 
 /// A block, encoded as it is on the block chain.
 #[derive(Default, Debug, Clone, PartialEq)]
@@ -266,7 +269,33 @@ impl<'x> OpenBlock<'x> {
 		ancestry: &mut Iterator<Item=ExtendedHeader>,
 	) -> Result<Self, Error> {
 		let number = parent.number() + 1;
-		let state = State::from_existing(db, parent.state_root().clone(), engine.account_start_nonce(number), factories)?;
+		let mut state = State::from_existing(db, parent.state_root().clone(), engine.account_start_nonce(number), factories)?;
+
+		trace!(target: "casper", "capser address is {:?}", &engine.params().casper_address);
+		if (&engine.params()).casper_address.is_some() && number < 0 {
+			// casper implementation call init
+			const CALLER_PRIVATE_KEY: &'static str = "0000000000000000000000000000000000000000000000000000000000000001";
+			const CALLER_ADDRESS: &'static str = "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf";
+			let key_pair = KeyPair::from_secret(CALLER_PRIVATE_KEY.parse().unwrap()).unwrap();
+			let (tx_data, decoder) = casper::functions::initialize_epoch::call(number);
+
+			let transaction = Transaction {
+				nonce: state.nonce(&(key_pair.address())).unwrap(),
+				action: Action::Call((&engine.params()).casper_address.unwrap()),
+				gas: 100_000.into(),
+				gas_price: 21_000.into(),
+				value: Default::default(),
+				data: tx_data,
+			};
+
+			let chain_id = Some(engine.params().chain_id);
+			let signed = transaction.sign(key_pair.secret(), chain_id);
+//		let signature = Signature::sign(key_pair.secret(), &transaction.hash(chain_id))?;
+//		let signed = SignedTransaction::new(transaction.with_signature(signature, chain_id))?;
+
+			state.apply(&EnvInfo::default(), engine.machine(), &signed, false);
+		}
+
 		let mut r = OpenBlock {
 			block: ExecutedBlock::new(state, last_hashes, tracing),
 			engine: engine,
@@ -276,6 +305,7 @@ impl<'x> OpenBlock<'x> {
 		r.block.header.set_parent_hash(parent.hash());
 		r.block.header.set_number(number);
 		r.block.header.set_author(author);
+
 		r.block.header.set_timestamp(engine.open_block_header_timestamp(parent.timestamp()));
 		r.block.header.set_extra_data(extra_data);
 

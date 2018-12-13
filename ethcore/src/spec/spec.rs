@@ -58,6 +58,7 @@ fn fmt_err<F: ::std::fmt::Display>(f: F) -> String {
 	format!("Spec json is invalid: {}", f)
 }
 
+#[derive(Debug, PartialEq, Clone)]
 pub enum NodeType {
 	BootNode,
 	MinerNode,
@@ -156,6 +157,12 @@ pub struct CommonParams {
 	pub transaction_permission_contract_transition: BlockNumber,
 	/// Maximum size of transaction's RLP payload
 	pub max_transaction_size: usize,
+
+	// hardchain
+	/// capser contract address
+	pub casper_address: Option<Address>,
+	/// block number to apply casper
+	pub fork_height: U256,
 }
 
 impl CommonParams {
@@ -336,6 +343,9 @@ impl From<ethjson::spec::Params> for CommonParams {
 				BlockNumber::max_value,
 				Into::into
 			),
+			// hardchain
+			casper_address: p.casper_address.map(Into::into),
+			fork_height: p.fork_height.into()
 		}
 	}
 }
@@ -425,8 +435,6 @@ pub struct Spec {
 
 	// added parameter for hardchain
 	pub node_type: NodeType,
-	pub casper_address: Address,
-	pub fork_height: U256,
 }
 
 #[cfg(test)]
@@ -453,8 +461,6 @@ impl Clone for Spec {
 			genesis_state: self.genesis_state.clone(),
 			// added parameter for hardchain
 			node_type: NodeType::BootNode,
-			casper_address: None,
-			fork_height: Default.default(),
 		}
 	}
 }
@@ -564,9 +570,7 @@ fn load_from(spec_params: SpecParams, s: ethjson::spec::Spec) -> Result<Spec, Er
 			"miner" => NodeType::MinerNode,
 			"device" => NodeType::DeviceNode,
 			_ => NodeType::BootNode
-		},
-		casper_address: s.casper_address.map_or(0x00.into(), Into::into),
-		fork_height: s.fork_height.into()
+		}
 	};
 
 	// use memoized state root if provided.

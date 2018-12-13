@@ -40,7 +40,7 @@ extern crate serde_derive;
 mod brain;
 mod brain_prefix;
 mod error;
-mod keypair;
+pub mod keypair;
 mod keccak;
 mod password;
 mod prefix;
