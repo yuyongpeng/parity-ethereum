@@ -16,8 +16,7 @@ min_peers = 25
 max_peers = 200
 nat = "any"
 id = 8887
-# bootnodes = ["enode://ae9c75905487841e540363207bbeb053bd4704cdfdd5388a82091796563c5cc6f7f1cace5d0a5f5f2dbfbf6e377a98c7947c450ac02e298cc9e2a4e8029edffd@106.75.71.124:33355"]
-bootnodes = ["enode://ae9c75905487841e540363207bbeb053bd4704cdfdd5388a82091796563c5cc6f7f1cace5d0a5f5f2dbfbf6e377a98c7947c450ac02e298cc9e2a4e8029edffd@192.168.0.177:34567"]
+bootnodes = ["enode://eb5b5a41cadcef38942515841e0b50bc6bf77bdf505eea78208d5605117a3bd44ebf6c2aa9548b987182d6a04ab1a208bf5bac7750be85cd6fb5d1758a8eab7b@192.168.0.177:34567"]
 discovery = true
 warp = true
 # private for miner, public for device, all for boot.
