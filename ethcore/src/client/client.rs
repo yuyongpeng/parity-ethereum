@@ -317,7 +317,6 @@ impl Importer {
 				}
 
 				match self.check_and_lock_block(block, client) {
-					trace!(target: "hardchain", "import_verified_blocks stop 8");
 					Ok(closed_block) => {
 						if self.engine.is_proposal(&header) {
 							trace!(target: "hardchain", "import_verified_blocks stop 9");
