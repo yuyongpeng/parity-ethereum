@@ -922,6 +922,7 @@ pub fn execute<Cr, Rr>(cmd: RunCmd, logger: Arc<RotatingLogger>,
 	where Cr: Fn(String) + 'static + Send,
 		Rr: Fn() + 'static + Send
 {
+	trace!(target: "main", "execute according to light or full mode.");
 	if cmd.light {
 		execute_light_impl(cmd, logger)
 	} else {

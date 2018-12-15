@@ -266,6 +266,7 @@ pub struct Host {
 impl Host {
 	/// Create a new instance
 	pub fn new(mut config: NetworkConfiguration, filter: Option<Arc<ConnectionFilter>>) -> Result<Host, Error> {
+		trace!(target: "network", "new host instance with configure as {:?}", config);
 		let mut listen_address = match config.listen_address {
 			None => SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), DEFAULT_PORT)),
 			Some(addr) => addr,

@@ -712,11 +712,15 @@ impl Configuration {
 
 	fn net_config(&self) -> Result<NetworkConfiguration, String> {
 		let mut ret = NetworkConfiguration::new();
+
+		// upnp set up.
 		ret.nat_enabled = self.args.arg_nat == "any" || self.args.arg_nat == "upnp";
 		ret.boot_nodes = to_bootnodes(&self.args.arg_bootnodes)?;
 		let (listen, public) = self.net_addresses()?;
 		ret.listen_address = Some(format!("{}", listen));
 		ret.public_address = public.map(|p| format!("{}", p));
+
+		// set use secret.
 		ret.use_secret = match self.args.arg_node_key.as_ref()
 			.map(|s| s.parse::<Secret>().or_else(|_| Secret::from_unsafe_slice(&keccak(s))).map_err(|e| format!("Invalid key: {:?}", e))
 			) {
@@ -724,6 +728,7 @@ impl Configuration {
 			Some(Ok(key)) => Some(key),
 			Some(Err(err)) => return Err(err),
 		};
+		trace!(target: "main", "the secret used from cli is {:?}", ret.use_secret);
 		ret.discovery_enabled = !self.args.flag_no_discovery && !self.args.flag_nodiscover;
 		ret.max_peers = self.max_peers();
 		ret.min_peers = self.min_peers();

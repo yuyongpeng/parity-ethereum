@@ -228,5 +228,6 @@ pub fn start<Cr, Rr>(conf: Configuration, on_client_rq: Cr, on_updater_rq: Rr) -
 		println!("{}", d);
 	}
 
+	// key logic generate command according to conf.
 	execute(conf.into_command()?, on_client_rq, on_updater_rq)
 }

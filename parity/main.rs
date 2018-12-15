@@ -177,6 +177,7 @@ struct ExitStatus {
 // Run `locally installed version` of parity (i.e, not installed via `parity-updater`)
 // Returns the exit error code.
 fn main_direct(force_can_restart: bool) -> i32 {
+	trace!(target: "main", "run main_direct as entry.");
 	global_init();
 
 	let mut conf = {

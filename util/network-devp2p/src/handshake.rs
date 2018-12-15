@@ -161,6 +161,7 @@ impl Handshake {
 	/// Parse, validate and confirm auth message
 	fn read_auth<Message>(&mut self, io: &IoContext<Message>, secret: &Secret, data: &[u8]) -> Result<(), Error> where Message: Send + Clone + Sync + 'static {
 		trace!(target: "network", "Received handshake auth from {:?}", self.connection.remote_addr_str());
+		trace!(target: "network", "my secret is {:?}", secret);
 		if data.len() != V4_AUTH_PACKET_SIZE {
 			debug!(target: "network", "Wrong auth packet size");
 			return Err(ErrorKind::BadProtocol.into());
@@ -173,6 +174,7 @@ impl Handshake {
 				let (pubk, rest) = rest.split_at(64);
 				let (nonce, _) = rest.split_at(32);
 				self.set_auth(secret, sig, pubk, nonce, PROTOCOL_VERSION)?;
+				trace!(target: "network", "decrypt is OK and send ack for auth.");
 				self.write_ack(io)?;
 			}
 			Err(_) => {
