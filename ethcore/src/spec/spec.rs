@@ -58,10 +58,14 @@ fn fmt_err<F: ::std::fmt::Display>(f: F) -> String {
 	format!("Spec json is invalid: {}", f)
 }
 
+/// Parameters for different node type for hard chain.
 #[derive(Debug, PartialEq, Clone)]
 pub enum NodeType {
+	/// node for boot and accelerator.
 	BootNode,
+	/// node for block producer.
 	MinerNode,
+	/// node for dphotos device.
 	DeviceNode,
 }
 
@@ -434,6 +438,7 @@ pub struct Spec {
 	genesis_state: PodState,
 
 	// added parameter for hardchain
+	/// Node type
 	pub node_type: NodeType,
 }
 

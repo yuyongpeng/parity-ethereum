@@ -52,7 +52,7 @@ use triehash::ordered_trie_root;
 use unexpected::{Mismatch, OutOfBounds};
 use verification::PreverifiedBlock;
 use vm::{EnvInfo, LastHashes};
-use ethkey::{KeyPair, Signature};
+use ethkey::KeyPair;
 
 use_contract!(casper, "res/contracts/casper.json");
 
@@ -275,9 +275,9 @@ impl<'x> OpenBlock<'x> {
 		if (&engine.params()).casper_address.is_some() && number < 0 {
 			// casper implementation call init
 			const CALLER_PRIVATE_KEY: &'static str = "0000000000000000000000000000000000000000000000000000000000000001";
-			const CALLER_ADDRESS: &'static str = "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf";
+			// const CALLER_ADDRESS: &'static str = "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf";
 			let key_pair = KeyPair::from_secret(CALLER_PRIVATE_KEY.parse().unwrap()).unwrap();
-			let (tx_data, decoder) = casper::functions::initialize_epoch::call(number);
+			let (tx_data, _decoder) = casper::functions::initialize_epoch::call(number);
 
 			let transaction = Transaction {
 				nonce: state.nonce(&(key_pair.address())).unwrap(),

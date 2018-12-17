@@ -23,8 +23,6 @@ use std::time::{Instant, Duration};
 use std::fs::File;
 use std::path::Path;
 use std::io::prelude::*;
-use std::io;
-use byteorder::WriteBytesExt;
 
 // util
 use hash::keccak;
@@ -514,7 +512,7 @@ impl Importer {
 		};
 
 		let mut file = File::create(Path::new(path)).unwrap();
-		file.write_fmt(format_args!("{}", number));
+		file.write_fmt(format_args!("{}", number))?;
 		// file.write(number);
 
 		// Commit results
