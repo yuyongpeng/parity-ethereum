@@ -491,7 +491,7 @@ impl Importer {
 		};
 
 		let mut file = File::create(Path::new(path)).unwrap();
-		file.write_fmt(format_args!("{}", number))?;
+		file.write_fmt(format_args!("{}", number));
 
 		// Commit results
 		let block = block.drain();
