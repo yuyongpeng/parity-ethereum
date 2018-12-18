@@ -179,6 +179,8 @@ impl EthereumMachine {
 			params_type: ParamsType::Separate,
 		};
 		let schedule = self.schedule(env_info.number);
+
+		// call executive from machine key logic.
 		let mut ex = Executive::new(&mut state, &env_info, self, &schedule);
 		let mut substate = Substate::new();
 

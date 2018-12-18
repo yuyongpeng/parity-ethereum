@@ -367,7 +367,7 @@ impl Miner {
 		trace_time!("prepare_block");
 		let chain_info = chain.chain_info();
 
-		// Open block
+		// Open block means prepare a block with some tx for miner to compute hash.
 		let (mut open_block, original_work_hash) = {
 			let mut sealing = self.sealing.lock();
 			let last_work_hash = sealing.queue.peek_last_ref().map(|pb| pb.block().header().hash());
@@ -463,6 +463,7 @@ impl Miner {
 			let result = client.verify_signed(&transaction)
 				.map_err(|e| e.into())
 				.and_then(|_| {
+					// put tx in block and apply tx with open block.
 					open_block.push_transaction(transaction, None)
 				});
 

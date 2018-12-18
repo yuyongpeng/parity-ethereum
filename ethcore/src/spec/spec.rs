@@ -710,6 +710,8 @@ impl Spec {
 				{
 					let machine = self.engine.machine();
 					let schedule = machine.schedule(env_info.number);
+
+					// create builtin contract from genesis.
 					let mut exec = Executive::new(&mut state, &env_info, &machine, &schedule);
 					if let Err(e) = exec.create(params, &mut substate, &mut NoopTracer, &mut NoopVMTracer) {
 						warn!(target: "spec", "Genesis constructor execution at {} failed: {}.", address, e);

@@ -365,6 +365,8 @@ impl<'x> OpenBlock<'x> {
 		}
 
 		let env_info = self.env_info();
+
+		// apply tx and update state key logic.
 		let outcome = self.block.state.apply(&env_info, self.engine.machine(), &t, self.block.traces.is_enabled())?;
 
 		self.block.transactions_set.insert(h.unwrap_or_else(||t.hash()));

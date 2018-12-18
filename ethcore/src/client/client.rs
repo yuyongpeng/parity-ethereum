@@ -266,9 +266,6 @@ impl Importer {
 
 	/// This is triggered by a message coming from a block queue when the block is ready for insertion
 	pub fn import_verified_blocks(&self, client: &Client) -> usize {
-		trace!(target: "hardchain", "import_verified_blocks stop 0");
-
-
 		// Shortcut out if we know we're incapable of syncing the chain.
 		if !client.enabled.load(AtomicOrdering::Relaxed) {
 			return 0;
@@ -276,29 +273,23 @@ impl Importer {
 
 		let max_blocks_to_import = client.config.max_round_blocks_to_import;
 		let (imported_blocks, import_results, invalid_blocks, imported, proposed_blocks, duration, is_empty) = {
-			trace!(target: "hardchain", "import_verified_blocks stop 1");
 			let mut imported_blocks = Vec::with_capacity(max_blocks_to_import);
 			let mut invalid_blocks = HashSet::new();
 			let mut proposed_blocks = Vec::with_capacity(max_blocks_to_import);
 			let mut import_results = Vec::with_capacity(max_blocks_to_import);
-
-			trace!(target: "hardchain", "import_verified_blocks stop 2");
 			let _import_lock = self.import_lock.lock();
 			let blocks = self.block_queue.drain(max_blocks_to_import);
-			trace!(target: "hardchain", "import_verified_blocks stop 3");
+
 			if blocks.is_empty() {
 				return 0;
 			}
 			trace_time!("import_verified_blocks");
 			let start = Instant::now();
 
-			trace!(target: "hardchain", "import_verified_blocks stop 4");
 			for block in blocks {
-				trace!(target: "hardchain", "import_verified_blocks stop 5");
 				let header = block.header.clone();
 				let bytes = block.bytes.clone();
 				let hash = header.hash();
-
 				let is_invalid = invalid_blocks.contains(header.parent_hash());
 				if is_invalid {
 					invalid_blocks.insert(hash);
@@ -306,9 +297,7 @@ impl Importer {
 				}
 
 				// hardchain add verify miner's eth here.
-				trace!(target: "hardchain", "import_verified_blocks stop 6");
 				if client.latest_balance(header.author()) <= 100_000.into() {
-					trace!(target: "hardchain", "import_verified_blocks stop 7");
 					warn!(target: "client", " miner {:?} not enough eth to generate block", header.author());
 					invalid_blocks.insert(hash);
 					continue
@@ -317,30 +306,23 @@ impl Importer {
 				match self.check_and_lock_block(block, client) {
 					Ok(closed_block) => {
 						if self.engine.is_proposal(&header) {
-							trace!(target: "hardchain", "import_verified_blocks stop 9");
 							self.block_queue.mark_as_good(&[hash]);
 							proposed_blocks.push(bytes);
 						} else {
-							trace!(target: "hardchain", "import_verified_blocks stop 10");
 							imported_blocks.push(hash);
-
 							let transactions_len = closed_block.transactions().len();
-
 							let route = self.commit_block(closed_block, &header, encoded::Block::new(bytes), client);
 							import_results.push(route);
-
 							client.report.write().accrue_block(&header, transactions_len);
 						}
 					},
 					Err(err) => {
-						trace!(target: "hardchain", "import_verified_blocks stop 11");
 						self.bad_blocks.report(bytes, format!("{:?}", err));
 						invalid_blocks.insert(hash);
 					},
 				}
 			}
 
-			trace!(target: "hardchain", "import_verified_blocks stop 12");
 			let imported = imported_blocks.len();
 			let invalid_blocks = invalid_blocks.into_iter().collect::<Vec<H256>>();
 
@@ -352,7 +334,6 @@ impl Importer {
 		};
 
 		{
-			trace!(target: "hardchain", "import_verified_blocks stop 13");
 			if !imported_blocks.is_empty() && is_empty {
 				let route = ChainRoute::from(import_results.as_ref());
 
@@ -373,10 +354,8 @@ impl Importer {
 			}
 		}
 
-		trace!(target: "hardchain", "import_verified_blocks stop 14");
 		let db = client.db.read();
 		db.key_value().flush().expect("DB flush failed.");
-		trace!(target: "hardchain", "import_verified_blocks stop 15");
 		imported
 	}
 
@@ -513,7 +492,6 @@ impl Importer {
 
 		let mut file = File::create(Path::new(path)).unwrap();
 		file.write_fmt(format_args!("{}", number))?;
-		// file.write(number);
 
 		// Commit results
 		let block = block.drain();

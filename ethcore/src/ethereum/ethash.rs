@@ -248,6 +248,7 @@ impl Engine<EthereumMachine> for Arc<Ethash> {
 					beneficiaries.push((*uncle_author, RewardKind::uncle(number, u.number())));
 				}
 
+				// update state via run vm.
 				let mut call = engines::default_system_or_code_call(&self.machine, block);
 
 				let rewards = c.reward(&beneficiaries, &mut call)?;
