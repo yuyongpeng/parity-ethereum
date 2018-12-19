@@ -348,6 +348,7 @@ impl Configuration {
 			let (private_provider_conf, private_enc_conf, private_tx_enabled) = self.private_provider_config()?;
 
 			let run_cmd = RunCmd {
+				// command line parameters key logic.
 				cache_config: cache_config,
 				dirs: dirs,
 				spec: spec,
@@ -376,6 +377,8 @@ impl Configuration {
 				fat_db: fat_db,
 				compaction: compaction,
 				vm_type: vm_type,
+
+				// fast sync
 				warp_sync: warp_sync,
 				warp_barrier: self.args.arg_warp_barrier,
 				geth_compatibility: geth_compatibility,
@@ -392,6 +395,8 @@ impl Configuration {
 				download_old_blocks: !self.args.flag_no_ancient_blocks,
 				verifier_settings: verifier_settings,
 				serve_light: !self.args.flag_no_serve_light,
+
+				// light set client to start as light client.
 				light: self.args.flag_light,
 				no_persistent_txqueue: self.args.flag_no_persistent_txqueue,
 				whisper: whisper_config,

@@ -16,6 +16,7 @@ min_peers = 25
 max_peers = 200
 nat = "any"
 id = 8887
+# bootnodes = ["enode://eb5b5a41cadcef38942515841e0b50bc6bf77bdf505eea78208d5605117a3bd44ebf6c2aa9548b987182d6a04ab1a208bf5bac7750be85cd6fb5d1758a8eab7b@106.75.19.197:34567"]
 bootnodes = ["enode://eb5b5a41cadcef38942515841e0b50bc6bf77bdf505eea78208d5605117a3bd44ebf6c2aa9548b987182d6a04ab1a208bf5bac7750be85cd6fb5d1758a8eab7b@192.168.0.177:34567"]
 discovery = true
 warp = true
@@ -37,8 +38,9 @@ no_serve_light = false
 #"0xd38f42b94875d04a9bececf6d4f1df496604fa1d"
 #"0xeb4da11a2a31b2f852d1d4d5fb7ee8a59982a9cd"
 
-author = ""
-engine_signer = ""
+#configure both author and signer for miner.
+#author = ""
+#engine_signer = ""
 force_sealing = true
 reseal_on_txs = "all"
 reseal_min_period = 4000
