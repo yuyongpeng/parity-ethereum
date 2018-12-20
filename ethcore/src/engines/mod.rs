@@ -433,8 +433,10 @@ pub trait Engine<M: Machine>: Sync + Send {
 	fn fork_choice(&self, new: &M::ExtendedHeader, best: &M::ExtendedHeader) -> ForkChoice;
 }
 
+// casper hardchain.
 /// Check whether a given block is the best block based on the default total difficulty rule.
 pub fn total_difficulty_fork_choice<T: TotalScoredHeader>(new: &T, best: &T) -> ForkChoice where <T as TotalScoredHeader>::Value: Ord {
+	// trace!(target: "casper", "fork choice new score is {:?} and best score is {:?}", new.total_score(), best.total_score());
 	if new.total_score() > best.total_score() {
 		ForkChoice::New
 	} else {

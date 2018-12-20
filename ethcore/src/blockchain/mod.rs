@@ -35,3 +35,4 @@ pub use self::extras::{BlockReceipts, BlockDetails, TransactionAddress};
 pub use self::import_route::ImportRoute;
 pub use self::update::ExtrasInsert;
 pub use types::tree_route::TreeRoute;
+pub use state::State;

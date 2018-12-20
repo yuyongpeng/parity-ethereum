@@ -50,6 +50,9 @@ use transaction::*;
 use types::blockchain_info::BlockChainInfo;
 use types::tree_route::TreeRoute;
 use views::{BlockView, HeaderView};
+// use state::State;
+
+use_contract!(casper, "res/contracts/casper.json");
 
 /// Database backing `BlockChain`.
 pub trait BlockChainDB: Send + Sync {
@@ -1597,7 +1600,8 @@ mod tests {
 			let parent_details = bc.block_details(&parent_hash).unwrap_or_else(|| panic!("Invalid parent hash: {:?}", parent_hash));
 			let block_total_difficulty = parent_details.total_difficulty + header.difficulty();
 			trace!(target: "casper", "new block difficulty is {} VS old best block difficulty is {}", block_total_difficulty, bc.best_block_total_difficulty());
-			// key logic compare difficulty
+			// casper key logic compare difficulty
+
 			if block_total_difficulty > bc.best_block_total_difficulty() {
 				::engines::ForkChoice::New
 			} else {

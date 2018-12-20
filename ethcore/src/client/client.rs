@@ -20,9 +20,9 @@ use std::str::FromStr;
 use std::sync::atomic::{AtomicUsize, AtomicBool, Ordering as AtomicOrdering};
 use std::sync::{Arc, Weak};
 use std::time::{Instant, Duration};
-use std::fs::File;
-use std::path::Path;
-use std::io::prelude::*;
+// use std::fs::File;
+// use std::path::Path;
+// use std::io::prelude::*;
 
 // util
 use hash::keccak;
@@ -88,8 +88,9 @@ pub use types::blockchain_info::BlockChainInfo;
 pub use types::block_status::BlockStatus;
 pub use blockchain::CacheSize as BlockChainCacheSize;
 pub use verification::QueueInfo as BlockQueueInfo;
-use spec::NodeType;
+// use spec::NodeType;
 
+use_contract!(casper, "res/contracts/casper.json");
 use_contract!(registry, "res/contracts/registrar.json");
 
 const MAX_ANCIENT_BLOCKS_QUEUE_SIZE: usize = 4096;
@@ -484,14 +485,14 @@ impl Importer {
 		let chain = client.chain.read();
 		let mut is_finalized = false;
 
-		// hardchain write block height in device.
-		let path = match client.config.node_type {
-			NodeType::DeviceNode => "/mnt/dphotos/parity/current_block_num.txt",
-			_ => "/data/parity/current_block_num.txt"
-		};
-
-		let mut file = File::create(Path::new(path)).unwrap();
-		file.write_fmt(format_args!("{}", number));
+		// hardchain write block height in device. disable since parity response query in time.
+//		let path = match client.config.node_type {
+//			NodeType::DeviceNode => "/mnt/dphotos/parity/current_block_num.txt",
+//			_ => "/data/parity/current_block_num.txt"
+//		};
+//
+//		let mut file = File::create(Path::new(path)).unwrap();
+//		file.write_fmt(format_args!("{}", number));
 
 		// Commit results
 		let block = block.drain();
@@ -528,7 +529,42 @@ impl Importer {
 		};
 
 		let route = chain.tree_route(best_hash, *parent).expect("forks are only kept when it has common ancestors; tree route from best to prospective's parent always exists; qed");
-		let fork_choice = if route.is_from_route_finalized {
+
+		// apply casper pos to choose best header.
+		let fork_choice = if self.engine.params().casper_address.is_some() && self.engine.params().fork_height > U256::from(number) {
+			let casper_address = self.engine.params().casper_address;
+			let casper_fork_height = self.engine.params().fork_height;
+			trace!(target: "casper", "capser address is {:?} and fork height is {:?}", casper_address, casper_fork_height);
+
+			let (tx_data, _decoder) = casper::functions::last_finalized_epoch::call();
+			let new_finalized_epoch: U256 = match client.call_contract(BlockId::Hash(new.header.hash()),
+																		 casper_address.unwrap(), tx_data.clone()) {
+				Ok(b) => {
+					trace!(target: "casper", "get value is {:?}", b);
+					0.into()
+				},
+				Err(_) => {
+					trace!(target: "casper", "call casper error.");
+					0.into()
+				}
+			};
+			let best_finalized_epoch: U256 = match client.call_contract(BlockId::Hash(best.header.hash()),
+																	   casper_address.unwrap(), tx_data) {
+				Ok(b) => {
+					trace!(target: "casper", "get value is {:?}", b);
+					0.into()
+				},
+				Err(_) => {
+					trace!(target: "casper", "call casper error.");
+					0.into()
+				}
+			};
+			if best_finalized_epoch >= new_finalized_epoch {
+				ForkChoice::Old
+			} else {
+				ForkChoice::New
+			}
+		} else if route.is_from_route_finalized {
 			ForkChoice::Old
 		} else {
 			self.engine.fork_choice(&new, &best)
@@ -1417,6 +1453,7 @@ impl RegistryInfo for Client {
 }
 
 impl CallContract for Client {
+	// call contract key logic
 	fn call_contract(&self, block_id: BlockId, address: Address, data: Bytes) -> Result<Bytes, String> {
 		let state_pruned = || CallError::StatePruned.to_string();
 		let state = &mut self.state_at(block_id).ok_or_else(&state_pruned)?;

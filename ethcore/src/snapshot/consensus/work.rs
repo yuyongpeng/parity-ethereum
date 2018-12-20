@@ -278,6 +278,7 @@ impl Rebuilder for PowRebuilder {
 			let mut batch = self.db.transaction();
 
 			// special-case the first block in each chunk.
+			// casper key logic
 			if idx == 3 {
 				if self.chain.insert_unordered_block(&mut batch, block_bytes, receipts, Some(parent_total_difficulty), is_best, false) {
 					self.disconnected.push((cur_number, block.header.hash()));
