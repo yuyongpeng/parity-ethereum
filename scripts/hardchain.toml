@@ -62,7 +62,7 @@ refuse_service_transactions = false
 
 [rpc]
 disable = false
-port = 28545
+port = 8545
 interface = "local"
 cors = []
 apis = ["web3", "eth", "pubsub", "net", "parity", "parity_pubsub", "traces", "rpc", "shh", "personal"]
