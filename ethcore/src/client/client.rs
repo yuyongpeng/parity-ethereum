@@ -298,6 +298,7 @@ impl Importer {
 				}
 
 				// hardchain add verify miner's eth here.
+				info!(target: "casper", "author 's eth is {:?}", client.latest_balance(header.author()));
 				if client.latest_balance(header.author()) <= 100_000.into() {
 					warn!(target: "client", " miner {:?} not enough eth to generate block", header.author());
 					invalid_blocks.insert(hash);
@@ -479,6 +480,7 @@ impl Importer {
 
 	// key logic commit block and update state
 	fn commit_block<B>(&self, block: B, header: &Header, block_data: encoded::Block, client: &Client) -> ImportRoute where B: Drain {
+		trace!(target: "client", "commit block for height {:?}", header.number());
 		let hash = &header.hash();
 		let number = header.number();
 		let parent = header.parent_hash();
@@ -531,6 +533,7 @@ impl Importer {
 		let route = chain.tree_route(best_hash, *parent).expect("forks are only kept when it has common ancestors; tree route from best to prospective's parent always exists; qed");
 
 		// apply casper pos to choose best header.
+		trace!(target: "casper", "capser address and height check.");
 		let fork_choice = if self.engine.params().casper_address.is_some() && self.engine.params().fork_height > U256::from(number) {
 			let casper_address = self.engine.params().casper_address;
 			let casper_fork_height = self.engine.params().fork_height;
@@ -569,6 +572,8 @@ impl Importer {
 		} else {
 			self.engine.fork_choice(&new, &best)
 		};
+
+		trace!(target: "casper", "fork choice is {:?}", fork_choice);
 
 		// CHECK! I *think* this is fine, even if the state_root is equal to another
 		// already-imported block of the same number.
