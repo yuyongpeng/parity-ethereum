@@ -205,6 +205,7 @@ struct SealingWork {
 impl SealingWork {
 	/// Are we allowed to do a non-mandatory reseal?
 	fn reseal_allowed(&self) -> bool {
+		trace!(target: "miner", "now is {:?}, allowed reseal is {:?}", Instant::now(), self.next_allowed_reseal);
 		Instant::now() > self.next_allowed_reseal
 	}
 }
@@ -563,6 +564,8 @@ impl Miner {
 
 	/// Check is reseal is allowed and necessary.
 	fn requires_reseal(&self, best_block: BlockNumber) -> bool {
+		trace!(target: "miner", "requires_reseal: min period is {:?}", self.options.reseal_min_period);
+
 		let mut sealing = self.sealing.lock();
 		if !sealing.enabled {
 			trace!(target: "miner", "requires_reseal: sealing is disabled");
@@ -1082,7 +1085,10 @@ impl miner::MinerService for Miner {
 
 		// Do nothing if reseal is not required,
 		// but note that `requires_reseal` updates internal state.
+
+		// key logic if not require just return. otherwise continue to prepare mining for next height.
 		if !self.requires_reseal(chain.chain_info().best_block_number) {
+			trace!(target: "casper", "miner will reseal for old block again.");
 			return;
 		}
 
@@ -1183,6 +1189,7 @@ impl miner::MinerService for Miner {
 		//    are in those blocks
 
 		let has_new_best_block = enacted.len() > 0;
+		trace!(target: "miner", "if new best block found is {:?}", has_new_best_block);
 
 		if has_new_best_block {
 			// Clear nonce cache
