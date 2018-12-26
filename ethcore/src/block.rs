@@ -271,8 +271,8 @@ impl<'x> OpenBlock<'x> {
 		let number = parent.number() + 1;
 		let mut state = State::from_existing(db, parent.state_root().clone(), engine.account_start_nonce(number), factories)?;
 
-		trace!(target: "casper", "capser address is {:?}", &engine.params().casper_address);
-		if (&engine.params()).casper_address.is_some() && number < 0 {
+		trace!(target: "casper", "capser address is {:?} fork height is {:?}", &engine.params().casper_address, &engine.params().fork_height);
+		if (&engine.params()).casper_address.is_some() && U256::from(number) < (&engine.params()).fork_height {
 			// casper implementation call init
 			const CALLER_PRIVATE_KEY: &'static str = "0000000000000000000000000000000000000000000000000000000000000001";
 			// const CALLER_ADDRESS: &'static str = "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf";

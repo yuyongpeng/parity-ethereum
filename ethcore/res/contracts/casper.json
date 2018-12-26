@@ -1,4 +1,4 @@
- [
+[
     {
       "constant": true,
       "inputs": [],
@@ -30,11 +30,11 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "epoch_length",
+      "name": "contract_owner",
       "outputs": [
         {
           "name": "",
-          "type": "uint256"
+          "type": "address"
         }
       ],
       "payable": false,
@@ -44,7 +44,7 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "last_justified_epoch",
+      "name": "epoch_length",
       "outputs": [
         {
           "name": "",
@@ -119,35 +119,7 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
       "name": "current_epoch",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "last_verified_epoch",
       "outputs": [
         {
           "name": "",
@@ -299,24 +271,6 @@
       "type": "event"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_operator",
-          "type": "address"
-        },
-        {
-          "name": "_value",
-          "type": "uint8"
-        }
-      ],
-      "name": "setOperator",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [
         {
@@ -338,7 +292,119 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "getMinDepositSize",
+      "name": "getNextValidatorIndex",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getCurrentRewardMark",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getCurrentRewardAmount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getTotalDepositNodeNum",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getInitDepositNode",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getCurrentEpoch",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getAddedDepositNode",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getLastEpochVotedNodeNum",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getLastFinalizedEpoch",
       "outputs": [
         {
           "name": "",
@@ -380,7 +446,21 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "recommended_target_hash",
+      "name": "getMinDepositSize",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "recommendedTargetHash",
       "outputs": [
         {
           "name": "",
@@ -399,7 +479,7 @@
           "type": "address"
         }
       ],
-      "name": "get_deposit_value",
+      "name": "getDepositValue",
       "outputs": [
         {
           "name": "",
@@ -418,7 +498,7 @@
           "type": "address"
         }
       ],
-      "name": "get_last_vote_epoch",
+      "name": "getLastVoteEpoch",
       "outputs": [
         {
           "name": "",
@@ -437,10 +517,84 @@
           "type": "uint256"
         }
       ],
-      "name": "initialize_epoch",
+      "name": "initializeEpoch",
       "outputs": [],
       "payable": true,
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "new_reward_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "setCurrentRewardAmount",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "new_reward_mark",
+          "type": "uint256"
+        }
+      ],
+      "name": "setCurrentRewardMark",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "new_init_deposit_node",
+          "type": "uint256"
+        }
+      ],
+      "name": "setInitDepositNode",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_operator",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint8"
+        }
+      ],
+      "name": "setOperator",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "new_owner",
+          "type": "address"
+        }
+      ],
+      "name": "changeOwner",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -461,99 +615,6 @@
         }
       ],
       "name": "vote",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "new_reward_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "set_current_reward_amount",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "new_reward_mark",
-          "type": "uint256"
-        }
-      ],
-      "name": "set_current_reward_mark",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "new_init_deposit_node",
-          "type": "uint256"
-        }
-      ],
-      "name": "set_init_deposit_node",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "new_owner",
-          "type": "address"
-        }
-      ],
-      "name": "change_owner",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "logout_msg",
-          "type": "bytes"
-        }
-      ],
-      "name": "logout",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "owner_withdraw",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "validator_index",
-          "type": "uint256"
-        }
-      ],
-      "name": "delete_validator",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -582,4 +643,4 @@
       "stateMutability": "nonpayable",
       "type": "function"
     }
-  ]
+]

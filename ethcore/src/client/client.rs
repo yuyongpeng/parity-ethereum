@@ -539,7 +539,7 @@ impl Importer {
 			let casper_fork_height = self.engine.params().fork_height;
 			trace!(target: "casper", "capser address is {:?} and fork height is {:?}", casper_address, casper_fork_height);
 
-			let (tx_data, _decoder) = casper::functions::last_finalized_epoch::call();
+			let (tx_data, _decoder) = casper::functions::get_last_finalized_epoch::call();
 			let new_finalized_epoch: U256 = match client.call_contract(BlockId::Hash(new.header.hash()),
 																		 casper_address.unwrap(), tx_data.clone()) {
 				Ok(b) => {
