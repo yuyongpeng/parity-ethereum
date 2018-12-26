@@ -568,8 +568,10 @@ impl Importer {
 				ForkChoice::New
 			}
 		} else if route.is_from_route_finalized {
+			trace!(target: "casper", "choose old because route finalized.");
 			ForkChoice::Old
 		} else {
+			trace!(target: "casper", "compare and decide which one is best.");
 			self.engine.fork_choice(&new, &best)
 		};
 

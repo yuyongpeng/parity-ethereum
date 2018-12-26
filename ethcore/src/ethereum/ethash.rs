@@ -374,6 +374,7 @@ impl Engine<EthereumMachine> for Arc<Ethash> {
 	}
 
 	fn fork_choice(&self, new: &ExtendedHeader, current: &ExtendedHeader) -> engines::ForkChoice {
+		trace!(target: "casper", "fork according to total difficulty.");
 		engines::total_difficulty_fork_choice(new, current)
 	}
 }

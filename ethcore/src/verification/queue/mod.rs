@@ -257,6 +257,7 @@ impl<K: Kind> VerificationQueue<K> {
 
 			let handle = thread::Builder::new()
 				.name(format!("Verifier #{}", i))
+				// key logic verification start verify threads.
 				.spawn(move || {
 					VerificationQueue::verify(
 						verification,
