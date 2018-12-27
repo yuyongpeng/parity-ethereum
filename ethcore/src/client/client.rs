@@ -1467,6 +1467,7 @@ impl CallContract for Client {
 		let header = self.block_header_decoded(block_id).ok_or_else(&state_pruned)?;
 
 		let transaction = self.contract_call_tx(block_id, address, data);
+		trace!(target: "casper", "call_contract tx id is {:?}", transaction.hash());
 
 		self.call(&transaction, Default::default(), state, &header)
 			.map_err(|e| format!("{:?}", e))

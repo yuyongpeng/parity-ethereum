@@ -798,7 +798,15 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 			self.state.add_balance(&sender, &(needed_balance - balance), CleanupMode::NoEmpty)?;
 		}
 
-		self.transact(t, options)
+		trace!(target: "casper", "transact_virtual");
+		let result = self.transact(t, options);
+		match result {
+			Ok(_) => result,
+			Err(error) => {
+				trace!(target: "casper", "transact_virtual error is {:?}", error);
+				result
+			}
+		}
 	}
 
 	/// Execute transaction/call with tracing enabled
@@ -907,6 +915,7 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 			}
 		};
 
+		trace!(target: "casper", "will finalize execution.");
 		// finalize here!
 		Ok(self.finalize(t, substate, result, output, tracer.drain(), vm_tracer.drain())?)
 	}
