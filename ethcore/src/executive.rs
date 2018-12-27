@@ -800,13 +800,11 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 
 		trace!(target: "casper", "transact_virtual");
 		let result = self.transact(t, options);
-		match result {
-			Ok(_) => result,
-			Err(error) => {
-				trace!(target: "casper", "transact_virtual error is {:?}", error);
-				result
-			}
+		match &result {
+			Ok(_) => trace!(target: "casper", "transact_virtual Ok"),
+			Err(error) => trace!(target: "casper", "transact_virtual error is {:?}", error)
 		}
+		result
 	}
 
 	/// Execute transaction/call with tracing enabled
