@@ -534,7 +534,7 @@ impl Importer {
 
 		// apply casper pos to choose best header.
 		trace!(target: "casper", "capser address and height check.");
-		let fork_choice = if self.engine.params().casper_address.is_some() && self.engine.params().fork_height < U256::from(number) {
+		let fork_choice = if self.engine.params().casper_address.is_some() && self.engine.params().fork_height > U256::from(number) {
 			let casper_address = self.engine.params().casper_address;
 			let casper_fork_height = self.engine.params().fork_height;
 			trace!(target: "casper", "capser address is {:?} and fork height is {:?}", casper_address, casper_fork_height);

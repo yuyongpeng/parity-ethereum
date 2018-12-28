@@ -272,7 +272,7 @@ impl<'x> OpenBlock<'x> {
 		let mut state = State::from_existing(db, parent.state_root().clone(), engine.account_start_nonce(number), factories)?;
 
 		trace!(target: "casper", "new block capser address is {:?} fork height is {:?}", &engine.params().casper_address, &engine.params().fork_height);
-		if (&engine.params()).casper_address.is_some() && U256::from(number) < (&engine.params()).fork_height {
+		if (&engine.params()).casper_address.is_some() && U256::from(number) > (&engine.params()).fork_height {
 			trace!(target: "casper", "try to initialize a new epoch.");
 			// casper implementation call init
 			const CALLER_PRIVATE_KEY: &'static str = "0000000000000000000000000000000000000000000000000000000000000001";
@@ -284,7 +284,7 @@ impl<'x> OpenBlock<'x> {
 				nonce: state.nonce(&(key_pair.address())).unwrap(),
 				action: Action::Call((&engine.params()).casper_address.unwrap()),
 				gas: 100_000.into(),
-				gas_price: 21_000.into(),
+				gas_price: 100_000.into(),
 				value: Default::default(),
 				data: tx_data,
 			};
@@ -296,9 +296,9 @@ impl<'x> OpenBlock<'x> {
 //		let signature = Signature::sign(key_pair.secret(), &transaction.hash(chain_id))?;
 //		let signed = SignedTransaction::new(transaction.with_signature(signature, chain_id))?;
 
-			match state.apply(&EnvInfo::default(), engine.machine(), &signed, false) {
+			match state.apply(&EnvInfo::default(), engine.machine(), &signed, true) {
 				Ok(_) => trace!(target: "casper", "apply tx Ok."),
-				Err(_) => trace!(target: "casper", "apply tx failed.")
+				Err(vm_trace) => trace!(target: "casper", "apply tx failed. trace is {:?}", vm_trace)
 			}
 		}
 
