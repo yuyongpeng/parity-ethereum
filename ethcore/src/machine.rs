@@ -213,7 +213,7 @@ impl EthereumMachine {
 	/// fork, for ethash.
 	pub fn on_new_block(&self, block: &mut ExecutedBlock) -> Result<(), Error> {
 		self.push_last_hash(block)?;
-
+		trace!(target: "casper", "on new block called.");
 		if let Some(ref ethash_params) = self.ethash_extensions {
 			if block.header().number() == ethash_params.dao_hardfork_transition {
 				let state = block.state_mut();

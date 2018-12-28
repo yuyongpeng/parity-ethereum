@@ -271,43 +271,11 @@ impl<'x> OpenBlock<'x> {
 		let number = parent.number() + 1;
 		let mut state = State::from_existing(db, parent.state_root().clone(), engine.account_start_nonce(number), factories)?;
 
-		trace!(target: "casper", "new block capser address is {:?} fork height is {:?}", &engine.params().casper_address, &engine.params().fork_height);
-		if (&engine.params()).casper_address.is_some() && U256::from(number) > (&engine.params()).fork_height {
-			trace!(target: "casper", "try to initialize a new epoch.");
-			// casper implementation call init
-			const CALLER_PRIVATE_KEY: &'static str = "0000000000000000000000000000000000000000000000000000000000000001";
-			// const CALLER_ADDRESS: &'static str = "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf";
-			let key_pair = KeyPair::from_secret(CALLER_PRIVATE_KEY.parse().unwrap()).unwrap();
-			let (tx_data, _decoder) = casper::functions::initialize_epoch::call(number / 50);
-
-			let transaction = Transaction {
-				nonce: state.nonce(&(key_pair.address())).unwrap(),
-				action: Action::Call((&engine.params()).casper_address.unwrap()),
-				gas: 100_000.into(),
-				gas_price: 100_000.into(),
-				value: Default::default(),
-				data: tx_data,
-			};
-
-			trace!(target: "casper", "tx id for init new epoch is {:?}.", transaction.nonce);
-
-			let chain_id = Some(engine.params().chain_id);
-			let signed = transaction.sign(key_pair.secret(), chain_id);
-//		let signature = Signature::sign(key_pair.secret(), &transaction.hash(chain_id))?;
-//		let signed = SignedTransaction::new(transaction.with_signature(signature, chain_id))?;
-
-			match state.apply(&EnvInfo::default(), engine.machine(), &signed, true) {
-				Ok(_) => trace!(target: "casper", "apply tx Ok."),
-				Err(vm_trace) => trace!(target: "casper", "apply tx failed. trace is {:?}", vm_trace)
-			}
-		}
-
 		let mut r = OpenBlock {
 			block: ExecutedBlock::new(state, last_hashes, tracing),
 			engine: engine,
 		};
 
-		// key logic for casper implementation. should call casper init each 50 block.
 		r.block.header.set_parent_hash(parent.hash());
 		r.block.header.set_number(number);
 		r.block.header.set_author(author);
@@ -324,6 +292,39 @@ impl<'x> OpenBlock<'x> {
 		// key logic for casper implementation.
 		engine.machine().on_new_block(&mut r.block)?;
 		engine.on_new_block(&mut r.block, is_epoch_begin, ancestry)?;
+
+		// key logic for casper implementation. should call casper init each 50 block.
+		trace!(target: "casper", "new block capser address is {:?} fork height is {:?}", &engine.params().casper_address, &engine.params().fork_height);
+		if (&engine.params()).casper_address.is_some() && U256::from(number) > (&engine.params()).fork_height {
+			trace!(target: "casper", "try to initialize a new epoch.");
+			// casper implementation call init
+			const CALLER_PRIVATE_KEY: &'static str = "0000000000000000000000000000000000000000000000000000000000000001";
+			// const CALLER_ADDRESS: &'static str = "0x7e5f4552091a69125d5dfcb7b8c2659029395bdf";
+			let key_pair = KeyPair::from_secret(CALLER_PRIVATE_KEY.parse().unwrap()).unwrap();
+			let (tx_data, _decoder) = casper::functions::initialize_epoch::call(number / 50);
+
+			let transaction = Transaction {
+				nonce: r.state().nonce(&(key_pair.address())).unwrap(),
+				action: Action::Call((&engine.params()).casper_address.unwrap()),
+				gas: 100_000.into(),
+				gas_price: 100_000.into(),
+				value: Default::default(),
+				data: tx_data,
+			};
+
+			trace!(target: "casper", "tx id for init new epoch is {:?}.", transaction.nonce);
+
+			let chain_id = Some(engine.params().chain_id);
+			let signed = transaction.sign(key_pair.secret(), chain_id);
+//		let signature = Signature::sign(key_pair.secret(), &transaction.hash(chain_id))?;
+//		let signed = SignedTransaction::new(transaction.with_signature(signature, chain_id))?;
+			let env = r.env_info().clone();
+
+			match r.block.state.apply(&env, engine.machine(), &signed, true) {
+				Ok(_) => trace!(target: "casper", "apply tx Ok."),
+				Err(vm_trace) => trace!(target: "casper", "apply tx failed. trace is {:?}", vm_trace)
+			}
+		}
 
 		Ok(r)
 	}
