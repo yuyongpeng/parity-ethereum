@@ -90,6 +90,7 @@ pub use blockchain::CacheSize as BlockChainCacheSize;
 pub use verification::QueueInfo as BlockQueueInfo;
 // use spec::NodeType;
 
+use ethabi::FunctionOutputDecoder;
 use_contract!(casper, "res/contracts/casper.json");
 use_contract!(registry, "res/contracts/registrar.json");
 
@@ -539,30 +540,39 @@ impl Importer {
 			let casper_fork_height = self.engine.params().fork_height;
 			trace!(target: "casper", "capser address is {:?} and fork height is {:?}", casper_address, casper_fork_height);
 
-			let (tx_data, _decoder) = casper::functions::get_last_finalized_epoch::call();
-			let new_finalized_epoch: U256 = match client.call_contract(BlockId::Hash(new.header.hash()),
-																		 casper_address.unwrap(), tx_data.clone()) {
-				Ok(b) => {
-					trace!(target: "casper", "get value is {:?}", b);
-					0.into()
-				},
-				Err(_) => {
-					trace!(target: "casper", "call casper error.");
-					0.into()
-				}
+			// get current epoch
+			let (tx_data, decoder) = casper::functions::get_current_epoch::call();
+			let result = client.call_contract(BlockId::Hash(new.header.parent_hash().clone()), casper_address.unwrap(), tx_data)
+				.and_then(|value| decoder.decode(&value).map_err(|e| e.to_string()));
+
+			match result {
+				Ok(epoch) => trace!(target: "casper", "get epoch is {:?}", epoch),
+				Err(err_message) => trace!(target: "casper", "call casper error {:?}.", err_message)
 			};
+
+			// get new header finalized epoch
+			let (tx_data, _decoder) = casper::functions::get_last_finalized_epoch::call();
+			let result = client.call_contract(BlockId::Hash(new.header.parent_hash().clone()), casper_address.unwrap(), tx_data.clone())
+				.and_then(|value| decoder.decode(&value).map_err(|e| e.to_string()));
+
+			match result {
+				Ok(epoch) => trace!(target: "casper", "get finalized epoch is {:?}", epoch),
+				Err(err_message) => trace!(target: "casper", "call casper error {:?}.", err_message)
+			};
+
+			// get old finalized epoch.
 			let best_finalized_epoch: U256 = match client.call_contract(BlockId::Hash(best.header.hash()),
 																	   casper_address.unwrap(), tx_data) {
 				Ok(b) => {
 					trace!(target: "casper", "get value is {:?}", b);
 					0.into()
 				},
-				Err(_) => {
-					trace!(target: "casper", "call casper error.");
+				Err(err_message) => {
+					trace!(target: "casper", "call casper error {:?}.", err_message);
 					0.into()
 				}
 			};
-			if best_finalized_epoch > new_finalized_epoch {
+			if best_finalized_epoch >= best_finalized_epoch {
 				ForkChoice::Old
 			} else {
 				ForkChoice::New
