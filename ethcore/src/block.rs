@@ -269,7 +269,7 @@ impl<'x> OpenBlock<'x> {
 		ancestry: &mut Iterator<Item=ExtendedHeader>,
 	) -> Result<Self, Error> {
 		let number = parent.number() + 1;
-		let mut state = State::from_existing(db, parent.state_root().clone(), engine.account_start_nonce(number), factories)?;
+		let state = State::from_existing(db, parent.state_root().clone(), engine.account_start_nonce(number), factories)?;
 
 		let mut r = OpenBlock {
 			block: ExecutedBlock::new(state, last_hashes, tracing),

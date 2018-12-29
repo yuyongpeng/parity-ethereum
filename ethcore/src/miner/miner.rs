@@ -752,11 +752,11 @@ impl Miner {
 	fn prepare_pending_block<C>(&self, client: &C) -> BlockPreparationStatus where
 		C: BlockChain + CallContract + BlockProducer + SealedBlockImporter + Nonce + Sync,
 	{
-		trace!(target: "miner", "prepare_pending_block: entering");
+		// trace!(target: "miner", "prepare_pending_block: entering");
 		let prepare_new = {
 			let mut sealing = self.sealing.lock();
 			let have_work = sealing.queue.peek_last_ref().is_some();
-			trace!(target: "miner", "prepare_pending_block: have_work={}", have_work);
+			// trace!(target: "miner", "prepare_pending_block: have_work={}", have_work);
 			if !have_work {
 				sealing.enabled = true;
 				true
