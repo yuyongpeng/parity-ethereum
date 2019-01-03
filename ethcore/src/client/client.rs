@@ -555,24 +555,33 @@ impl Importer {
 			let result = client.call_contract(BlockId::Hash(new.header.parent_hash().clone()), casper_address.unwrap(), tx_data.clone())
 				.and_then(|value| decoder.decode(&value).map_err(|e| e.to_string()));
 
-			match result {
-				Ok(epoch) => trace!(target: "casper", "get finalized epoch is {:?}", epoch),
-				Err(err_message) => trace!(target: "casper", "call casper error {:?}.", err_message)
-			};
-
-			// get old finalized epoch.
-			let best_finalized_epoch: U256 = match client.call_contract(BlockId::Hash(best.header.hash()),
-																	   casper_address.unwrap(), tx_data) {
-				Ok(b) => {
-					trace!(target: "casper", "get value is {:?}", b);
-					0.into()
+			let new_finalized_epoch: U256 = match result {
+				Ok(epoch) => {
+					trace!(target: "casper", "get new finalized epoch is {:?}", epoch);
+					epoch
 				},
 				Err(err_message) => {
-					trace!(target: "casper", "call casper error {:?}.", err_message);
+					trace!(target: "casper", "new call casper error {:?}.", err_message);
 					0.into()
 				}
 			};
-			if best_finalized_epoch >= best_finalized_epoch {
+
+			// get old finalized epoch.
+			let result = client.call_contract(BlockId::Hash(best.header.hash()), casper_address.unwrap(), tx_data)
+				.and_then(|value| decoder.decode(&value).map_err(|e| e.to_string()));
+
+			let best_finalized_epoch: U256 = match result {
+				Ok(epoch) => {
+					trace!(target: "casper", "get best finalized epoch is {:?}", epoch);
+					epoch
+				},
+				Err(err_message) => {
+					trace!(target: "casper", "best call casper error {:?}.", err_message);
+					0.into()
+				}
+			};
+
+			if best_finalized_epoch > new_finalized_epoch {
 				ForkChoice::Old
 			} else {
 				ForkChoice::New
