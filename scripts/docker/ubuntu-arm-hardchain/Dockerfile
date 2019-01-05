@@ -1,4 +1,7 @@
-FROM ubuntu:16.04
+FROM arm32v6/alpine
+
+apk add --no-cache eudev-libs libgcc libstdc++
+
 
 COPY parity /root/parity
 COPY hardchain.toml /root/hardchain.toml
