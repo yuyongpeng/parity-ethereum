@@ -29,7 +29,7 @@
 		"maxCodeSize": 24576,
 		"maxCodeSizeTransition": 2675000,
 		"casperAddress": "",
-		"forkHeight": 0
+		"forkHeight": 123456789
 	},
 	"genesis": {
 		"seal": {
