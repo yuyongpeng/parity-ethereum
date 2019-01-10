@@ -437,6 +437,7 @@ impl Host {
 	}
 
 	fn init_public_interface(&self, io: &IoContext<NetworkIoMessage>) -> Result<(), Error> {
+		trace!(target: "main", "host init public interface.");
 		if self.info.read().public_endpoint.is_some() {
 			return Ok(());
 		}
@@ -445,17 +446,19 @@ impl Host {
 		let allow_ips = self.info.read().config.ip_filter.clone();
 		let public_endpoint = match public_address {
 			None => {
+				trace!(target: "main", "no public address, try to use nat to register one.");
 				let public_address = select_public_address(local_endpoint.address.port());
 				let public_endpoint = NodeEndpoint { address: public_address, udp_port: local_endpoint.udp_port };
 				if self.info.read().config.nat_enabled {
 					match map_external_address(&local_endpoint) {
 						Some(endpoint) => {
-							info!("NAT mapped to external address {}", endpoint.address);
+							trace!(target: "main", "NAT mapped to external address {}", endpoint.address);
 							endpoint
 						},
 						None => public_endpoint
 					}
 				} else {
+					trace!(target: "main", "NAT mapping failed.");
 					public_endpoint
 				}
 			}
