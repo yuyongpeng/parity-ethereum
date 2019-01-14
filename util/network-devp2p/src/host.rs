@@ -455,10 +455,13 @@ impl Host {
 							trace!(target: "main", "NAT mapped to external address {}", endpoint.address);
 							endpoint
 						},
-						None => public_endpoint
+						None => {
+							trace!(target: "main", "NAT mapping failed.");
+							public_endpoint
+						}
 					}
 				} else {
-					trace!(target: "main", "NAT mapping failed.");
+					trace!(target: "main", "NAT disabled.");
 					public_endpoint
 				}
 			}
