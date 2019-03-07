@@ -1,6 +1,8 @@
-FROM armv7/armhf-ubuntu_core
+FROM arm32v7/ubuntu:16.04
 
-RUN apt-get update && apt-get -y upgrade  && apt-get install libgcc libstdc++ && apt-get autoremove && apt-get clean
+COPY sources.list /etc/apt/
+RUN apt update && apt -y upgrade
+RUN apt install libgcc libstdc++
 
 COPY parity /root/parity
 COPY hardchain.toml /root/hardchain.toml
