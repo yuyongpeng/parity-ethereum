@@ -544,7 +544,7 @@ fn load_from(spec_params: SpecParams, s: ethjson::spec::Spec) -> Result<Spec, Er
 		None
 	};
 
-	trace!(target: "spce", "builtin accounts in spce {:?}", s.accounts);
+	trace!(target: "spec", "builtin accounts in spec {:?}", s.accounts);
 
 	let mut s = Spec {
 		name: s.name.clone().into(),
