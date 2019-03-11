@@ -176,6 +176,7 @@ fn execute_light_impl(cmd: RunCmd, logger: Arc<RotatingLogger>) -> Result<Runnin
 
 	// load genesis hash
 	let genesis_hash = spec.genesis_header().hash();
+	trace!(target: "main", "genesis hash is {:?}.", genesis_hash);
 
 	// database paths
 	let db_dirs = cmd.dirs.database(genesis_hash, cmd.spec.legacy_fork_name(), spec.data_dir.clone());
@@ -370,6 +371,7 @@ fn execute_impl<Cr, Rr>(cmd: RunCmd, logger: Arc<RotatingLogger>, on_client_rq: 
 
 	// load genesis hash
 	let genesis_hash = spec.genesis_header().hash();
+	trace!(target: "main", "genesis hash is {:?}.", genesis_hash);
 
 	// database paths
 	let db_dirs = cmd.dirs.database(genesis_hash, cmd.spec.legacy_fork_name(), spec.data_dir.clone());
