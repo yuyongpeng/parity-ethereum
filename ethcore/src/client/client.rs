@@ -368,6 +368,7 @@ impl Importer {
 
 		// Check the block isn't so old we won't be able to enact it.
 		let best_block_number = client.chain.read().best_block_number();
+		trace!(target: "client", "best block number is {} and checked block number is {}", best_block_number, header.number());
 		if client.pruning_info().earliest_state > header.number() {
 			warn!(target: "client", "Block import failed for #{} ({})\nBlock is ancient (current best block: #{}).", header.number(), header.hash(), best_block_number);
 			bail!("Block is ancient");
@@ -411,6 +412,8 @@ impl Importer {
 		let db = client.state_db.read().boxed_clone_canon(header.parent_hash());
 
 		let is_epoch_begin = chain.epoch_transition(parent.number(), *header.parent_hash()).is_some();
+		trace!(target: "client", "if we are in an epoch begin {}", is_epoch_begin);
+
 		let enact_result = enact_verified(
 			block,
 			engine,
@@ -437,11 +440,14 @@ impl Importer {
 		if header.number() < engine.params().validate_receipts_transition
 			&& header.receipts_root() != locked_block.block().header().receipts_root()
 		{
+			trace!(target: "client", "go into strip receipts implementation");
 			locked_block.strip_receipts_outcomes();
 		}
 
 		// Final Verification
 		if let Err(e) = self.verifier.verify_block_final(&header, locked_block.block().header()) {
+			trace!(target: "client", "verify_block_final new block as {} with hash {}", header.number(), header.hash());
+			trace!(target: "client", "verify_block_final locked_block as {} with hash {}", locked_block.block().header().number(), locked_block.block().header().hash());
 			warn!(target: "client", "Stage 5 block verification failed for #{} ({})\nError: {:?}", header.number(), header.hash(), e);
 			bail!(e);
 		}
