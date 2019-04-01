@@ -299,7 +299,7 @@ impl Importer {
 				}
 
 				// hardchain add verify miner's eth here.
-				info!(target: "casper", "author 's eth is {:?}", client.latest_balance(header.author()));
+				trace!(target: "casper", "author 's eth is {:?}", client.latest_balance(header.author()));
 				if client.latest_balance(header.author()) <= 100_000.into() {
 					warn!(target: "client", " miner {:?} not enough eth to generate block", header.author());
 					invalid_blocks.insert(hash);
