@@ -1224,7 +1224,7 @@ impl miner::MinerService for Miner {
 			// Reset `next_allowed_reseal` in case a block is imported.
 			// Even if min_period is high, we will always attempt to create
 			// new pending block.
-			self.sealing.lock().next_allowed_reseal = Instant::now();
+			self.sealing.lock().next_allowed_reseal = Instant::now() + self.options.reseal_min_period;
 
 			if !is_internal_import {
 				// --------------------------------------------------------------------------
