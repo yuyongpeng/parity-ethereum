@@ -606,6 +606,7 @@ impl Miner {
 			sealing.queue.reset();
 			false
 		} else {
+			trace!(target: "miner", "Update next_allowed_reseal in requires_reseal");
 			// sealing enabled and we don't want to sleep.
 			sealing.next_allowed_reseal = Instant::now() + self.options.reseal_min_period;
 			true
@@ -1224,6 +1225,7 @@ impl miner::MinerService for Miner {
 			// Reset `next_allowed_reseal` in case a block is imported.
 			// Even if min_period is high, we will always attempt to create
 			// new pending block.
+			trace!(target: "miner", "Update next_allowed_reseal in chain_new_blocks");
 			self.sealing.lock().next_allowed_reseal = Instant::now() + self.options.reseal_min_period;
 
 			if !is_internal_import {
