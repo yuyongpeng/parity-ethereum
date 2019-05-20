@@ -20,6 +20,8 @@ use std::str::FromStr;
 use std::sync::atomic::{AtomicUsize, AtomicBool, Ordering as AtomicOrdering};
 use std::sync::{Arc, Weak};
 use std::time::{Instant, Duration};
+use std::ops::Add;
+
 // use std::fs::File;
 // use std::path::Path;
 // use std::io::prelude::*;
@@ -2400,6 +2402,23 @@ impl ImportSealedBlock for Client {
 		let header = block.header().clone();
 		let hash = header.hash();
 		self.notify(|n| n.block_pre_import(&raw, &hash, header.difficulty()));
+
+		// not import block if without tx
+		if block.transactions().len() <= 0 {
+			let duration = Duration::new(5 * 60 * 1000, 0);
+
+			// let parent_hash = block.header().parent_hash().clone();
+			let parent_header = self.chain.read().block_header_data(block.header().parent_hash());
+			let parent_timestamp = parent_header.unwrap().timestamp();
+
+			let now_duration = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap();
+			let parent_duration = Duration::new(parent_timestamp, 0);
+
+			if parent_duration.add(duration) > now_duration {
+				trace!(target: "client", "Not import block without tx within 5 minutes.");
+				return Err(From::from(BlockError::InvalidSeal));
+			}
+		}
 
 		let route = {
 			// Do a super duper basic verification to detect potential bugs

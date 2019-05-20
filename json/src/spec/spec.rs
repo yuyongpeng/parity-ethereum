@@ -16,9 +16,7 @@
 
 //! Spec deserialization.
 
-use hash::Address;
 use std::io::Read;
-use uint::Uint;
 use serde_json;
 use serde_json::Error;
 use spec::{Params, Genesis, Engine, State, HardcodedSync};
