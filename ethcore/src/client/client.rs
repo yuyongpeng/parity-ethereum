@@ -922,23 +922,6 @@ impl Client {
 		Ok(client)
 	}
 
-	/// check the produced block is valid without tx.
-	pub fn invalid_empty_block(&self, parent_hash: &H256) -> bool {
-		return false;
-//		let now = Instant::now().elapsed().as_secs();
-//
-//		// let parent_hash = block.header().parent_hash().clone();
-//		let parent_header = self.chain.read().block_header_data(parent_hash);
-//		let parent_timestamp = parent_header.unwrap().timestamp();
-//
-//		if now <= parent_timestamp + 60 * 5 {
-//			trace!(target: "client", "invalid_empty_block as elapsed since last block less 5 min.");
-//			return true;
-//		} else {
-//			return false;
-//		}
-	}
-
 	/// Wakes up client if it's a sleep.
 	pub fn keep_alive(&self) {
 		let should_wake = match *self.mode.lock() {
@@ -1522,11 +1505,6 @@ impl ImportBlock for Client {
 	fn import_block(&self, unverified: Unverified) -> EthcoreResult<H256> {
 		if self.chain.read().is_known(&unverified.hash()) {
 			bail!(EthcoreErrorKind::Import(ImportErrorKind::AlreadyInChain));
-		}
-
-		if unverified.transactions.len() <= 0 && self.invalid_empty_block(&unverified.parent_hash()) {
-			trace!(target: "client", "Not import_block without tx within 5 minutes.");
-			bail!(EthcoreErrorKind::Import(ImportErrorKind::KnownBad));
 		}
 
 		let status = self.block_status(BlockId::Hash(unverified.parent_hash()));
@@ -2423,12 +2401,6 @@ impl ImportSealedBlock for Client {
 		let header = block.header().clone();
 		let hash = header.hash();
 
-		// not import block if without tx
-		if block.transactions().len() <= 0 && self.invalid_empty_block(block.header().parent_hash()) {
-				trace!(target: "client", "Not import_sealed_block without tx within 5 minutes.");
-				return Err(From::from(BlockError::InvalidSeal));
-		}
-
 		self.notify(|n| n.block_pre_import(&raw, &hash, header.difficulty()));
 
 		let route = {
@@ -2479,10 +2451,7 @@ impl ImportSealedBlock for Client {
 impl BroadcastProposalBlock for Client {
 	fn broadcast_proposal_block(&self, block: SealedBlock) {
 		const DURATION_ZERO: Duration = Duration::from_millis(0);
-		if block.transactions().len() <= 0 && self.invalid_empty_block(block.header().parent_hash()) {
-			trace!(target: "client", "Not broadcast_proposal_block without tx within 5 minutes.");
-			return ;
-		}
+
 		self.notify(|notify| {
 			notify.new_blocks(
 				vec![],
