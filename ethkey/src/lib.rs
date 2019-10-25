@@ -25,6 +25,7 @@ extern crate parity_wordlist;
 #[macro_use]
 extern crate quick_error;
 extern crate rand;
+extern crate rand7;
 extern crate rustc_hex;
 extern crate secp256k1;
 extern crate serde;

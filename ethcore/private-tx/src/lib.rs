@@ -237,8 +237,17 @@ impl Provider where {
 		let mut state_buf = [0u8; 64];
 		state_buf[..32].clone_from_slice(&state_hash);
 		state_buf[32..].clone_from_slice(&H256::from(nonce));
-		keccak(&state_buf.as_ref())
+		keccak(AsRef::<[u8]>::as_ref(&state_buf[..]))
 	}
+
+//	pub fn calculate_state_hash(&self, state: &Bytes, nonce: U256) -> H256 {
+//		let state_hash = keccak(state);
+//		let nonce_h256: H256 = BigEndianHash::from_uint(&nonce);
+//		let mut state_buf = [0u8; 64];
+//		state_buf[..32].clone_from_slice(&state_hash);
+//		state_buf[32..].clone_from_slice(&nonce_h256);
+//		keccak(AsRef::<[u8]>::as_ref(&state_buf[..]))
+//	}
 
 	fn pool_client<'a>(&'a self, nonce_cache: &'a NonceCache) -> miner::pool_client::PoolClient<'a, Client> {
 		let engine = self.client.engine();
@@ -709,3 +718,14 @@ impl ChainNotify for Provider {
 		}
 	}
 }
+
+//impl ChainNotify for Provider {
+//	fn new_blocks(&self, new_blocks: NewBlocks) {
+//		if new_blocks.imported.is_empty() || new_blocks.has_more_blocks_to_import { return }
+//		trace!(target: "privatetx", "New blocks imported, try to prune the queue");
+//		if let Err(err) = self.process_verification_queue() {
+//			warn!(target: "privatetx", "Cannot prune private transactions queue. error: {:?}", err);
+//		}
+//		self.keys_provider.update_acl_contract();
+//	}
+//}

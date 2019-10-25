@@ -36,7 +36,9 @@ impl Generator for OsRng {
 	type Error = ::Void;
 
 	fn generate(&mut self) -> Result<KeyPair, Self::Error> {
-		let (sec, publ) = SECP256K1.generate_keypair(self)
+		// let (sec, publ) = SECP256K1.generate_keypair(self)
+
+		let (sec, publ) = SECP256K1.generate_keypair(&mut rand7::thread_rng())
 			.expect("context always created with full capabilities; qed");
 
 		Ok(KeyPair::from_keypair(sec, publ))
