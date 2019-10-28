@@ -790,6 +790,7 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 	pub fn transact_virtual<T, V>(&'a mut self, t: &SignedTransaction, options: TransactOptions<T, V>)
 		-> Result<Executed<T::Output, V::Output>, ExecutionError> where T: Tracer, V: VMTracer,
 	{
+		trace!(target: "evm", "call in transact_virtual of executives.");
 		let sender = t.sender();
 		let balance = self.state.balance(&sender)?;
 		let needed_balance = t.value.saturating_add(t.gas.saturating_mul(t.gas_price));
@@ -816,6 +817,7 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 		mut tracer: T,
 		mut vm_tracer: V
 	) -> Result<Executed<T::Output, V::Output>, ExecutionError> where T: Tracer, V: VMTracer {
+		trace!(target: "evm", "call in transact_with_tracer.");
 		let sender = t.sender();
 		let nonce = self.state.nonce(&sender)?;
 
@@ -865,6 +867,7 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 		}
 		self.state.sub_balance(&sender, &U256::from(gas_cost), &mut substate.to_cleanup_mode(&schedule))?;
 
+		trace!(target: "evm", "call in transact_with_tracer. before contract Action");
 		let (result, output) = match t.action {
 			Action::Create => {
 				let (new_address, code_hash) = contract_address(self.machine.create_address_scheme(self.info.number), &sender, &nonce, &t.data);
@@ -998,7 +1001,8 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 		tracer: &mut T,
 		vm_tracer: &mut V
 	) -> vm::Result<FinalizationResult> where T: Tracer, V: VMTracer {
-		self.call_with_stack_depth(params, substate, 0, tracer, vm_tracer)
+		// self.call_with_stack_depth(params, substate, 0, tracer, vm_tracer)
+		self.call_with_stack_depth(params, substate, 3, tracer, vm_tracer)
 	}
 
 	/// Creates contract with given contract params and stack depth.

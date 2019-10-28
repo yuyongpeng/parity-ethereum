@@ -1343,6 +1343,7 @@ impl Client {
 			T: trace::Tracer,
 			V: trace::VMTracer,
 		{
+			trace!(target: "evm", "call do_virtual_call.");
 			let options = options
 				.dont_check_nonce()
 				.save_output_from_contract();
@@ -1563,7 +1564,7 @@ impl Call for Client {
 			gas_limit: U256::max_value(),
 		};
 		let machine = self.engine.machine();
-
+		trace!(target: "evm", "call implemented in Client.");
 		Self::do_virtual_call(&machine, &env_info, state, transaction, analytics)
 	}
 
