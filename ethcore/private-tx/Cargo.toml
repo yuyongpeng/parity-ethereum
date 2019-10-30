@@ -18,6 +18,7 @@ ethcore-logger = { path = "../../logger" }
 ethcore-miner = { path = "../../miner" }
 ethcore-transaction = { path = "../transaction" }
 ethereum-types = "0.4"
+types8 = {package = "ethereum-types", version = "0.8"}
 ethjson = { path = "../../json" }
 ethkey = { path = "../../ethkey" }
 fetch = { path = "../../util/fetch" }

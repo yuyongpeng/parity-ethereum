@@ -833,6 +833,7 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 		}
 
 		let init_gas = t.gas - base_gas_required;
+		trace!(target: "evm", "transact_with_tracer sender gas is {} and base gas is {}, gas price is {}.", t.gas, base_gas_required, t.gas_price);
 
 		// validate transaction nonce
 		if check_nonce && t.nonce != nonce {
@@ -937,6 +938,7 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 		vm_tracer.prepare_subtrace(params.code.as_ref().map_or_else(|| &[] as &[u8], |d| &*d as &[u8]));
 
 		let gas = params.gas;
+		trace!(target: "evm", "call_with_stack_depth parameter gas is {}", gas);
 
 		let vm_factory = self.state.vm_factory();
 		let result = CallCreateExecutive::new_call_raw(
@@ -952,15 +954,18 @@ impl<'a, B: 'a + StateBackend> Executive<'a, B> {
 
 		match result {
 			Ok(ref val) if val.apply_state => {
+				trace!(target: "evm", "call_with_stack_depth result OK");
 				tracer.done_trace_call(
 					gas - val.gas_left,
 					&val.return_data,
 				);
 			},
 			Ok(_) => {
+				trace!(target: "evm", "call_with_stack_depth result OK with failed trace");
 				tracer.done_trace_failed(&vm::Error::Reverted);
 			},
 			Err(ref err) => {
+				trace!(target: "evm", "call_with_stack_depth failed");
 				tracer.done_trace_failed(err);
 			},
 		}

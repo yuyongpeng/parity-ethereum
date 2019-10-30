@@ -342,9 +342,11 @@ impl Engine<EthereumMachine> for Arc<Ethash> {
 			   mix = H256(result.mix_hash),
 			   res = H256(result.value));
 		if mix != seal.mix_hash {
+			trace!(target: "miner", "mix != seal.mix_hash");
 			return Err(From::from(BlockError::MismatchedH256SealElement(Mismatch { expected: mix, found: seal.mix_hash })));
 		}
 		if &difficulty < header.difficulty() {
+			trace!(target: "miner", "difficulty < header.difficult");
 			return Err(From::from(BlockError::InvalidProofOfWork(OutOfBounds { min: Some(header.difficulty().clone()), max: None, found: difficulty })));
 		}
 		Ok(())

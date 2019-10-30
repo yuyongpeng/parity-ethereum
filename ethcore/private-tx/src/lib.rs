@@ -33,6 +33,7 @@ extern crate ethcore_miner;
 extern crate ethcore_transaction as transaction;
 extern crate ethabi;
 extern crate ethereum_types;
+extern crate types8;
 extern crate ethkey;
 extern crate ethjson;
 extern crate fetch;
@@ -71,6 +72,7 @@ use std::sync::{Arc, Weak};
 use std::collections::{HashMap, HashSet};
 use std::time::Duration;
 use ethereum_types::{H128, H256, U256, Address};
+use types8::BigEndianHash;
 use hash::keccak;
 use rlp::*;
 use parking_lot::RwLock;
@@ -233,6 +235,7 @@ impl Provider where {
 
 	/// Calculate hash from united private state and contract nonce
 	pub fn calculate_state_hash(&self, state: &Bytes, nonce: U256) -> H256 {
+		trace!(target: "evm", "call in calculate_state_hash.");
 		let state_hash = keccak(state);
 		let mut state_buf = [0u8; 64];
 		state_buf[..32].clone_from_slice(&state_hash);
@@ -240,6 +243,7 @@ impl Provider where {
 		keccak(AsRef::<[u8]>::as_ref(&state_buf[..]))
 	}
 
+//  latest official version
 //	pub fn calculate_state_hash(&self, state: &Bytes, nonce: U256) -> H256 {
 //		let state_hash = keccak(state);
 //		let nonce_h256: H256 = BigEndianHash::from_uint(&nonce);
