@@ -229,6 +229,7 @@ impl<'a> CallCreateExecutive<'a> {
 		let kind = if let Some(builtin) = machine.builtin(&params.code_address, info.number) {
 			// Engines aren't supposed to return builtins until activation, but
 			// prefer to fail rather than silently break consensus.
+			trace!(target: "evm", "new_call_raw CallBuiltin");
 			if !builtin.is_active(info.number) {
 				panic!("Consensus failure: engine implementation prematurely enabled built-in at {}", params.code_address);
 			}
@@ -236,8 +237,10 @@ impl<'a> CallCreateExecutive<'a> {
 			CallCreateExecutiveKind::CallBuiltin(params)
 		} else {
 			if params.code.is_some() {
+				trace!(target: "evm", "new_call_raw ExecCall");
 				CallCreateExecutiveKind::ExecCall(params, Substate::new())
 			} else {
+				trace!(target: "evm", "new_call_raw transfer");
 				CallCreateExecutiveKind::Transfer(params)
 			}
 		};
@@ -292,6 +295,7 @@ impl<'a> CallCreateExecutive<'a> {
 
 	fn check_eip684<B: 'a + StateBackend>(params: &ActionParams, state: &State<B>) -> vm::Result<()> {
 		if state.exists_and_has_code_or_nonce(&params.address)? {
+			trace!(target: "evm", "check_eip684 try to create a contract.");
 			return Err(vm::Error::OutOfGas);
 		}
 
@@ -366,6 +370,7 @@ impl<'a> CallCreateExecutive<'a> {
 	pub fn exec<B: 'a + StateBackend, T: Tracer, V: VMTracer>(mut self, state: &mut State<B>, substate: &mut Substate, tracer: &mut T, vm_tracer: &mut V) -> ExecutiveTrapResult<'a, FinalizationResult> {
 		match self.kind {
 			CallCreateExecutiveKind::Transfer(ref params) => {
+				trace!(target: "evm", "exec transfer");
 				assert!(!self.is_create);
 
 				let mut inner = || {
@@ -383,6 +388,7 @@ impl<'a> CallCreateExecutive<'a> {
 			},
 			CallCreateExecutiveKind::CallBuiltin(ref params) => {
 				assert!(!self.is_create);
+				trace!(target: "evm", "exec CallBuiltin");
 
 				let mut inner = || {
 					let builtin = self.machine.builtin(&params.code_address, self.info.number).expect("Builtin is_some is checked when creating this kind in new_call_raw; qed");
@@ -416,6 +422,7 @@ impl<'a> CallCreateExecutive<'a> {
 							})
 						}
 					} else {
+						trace!(target: "evm", "exec CallBuiltin {:?} out of gas builtin too much.", data);
 						// just drain the whole gas
 						state.revert_to_checkpoint();
 
@@ -427,6 +434,7 @@ impl<'a> CallCreateExecutive<'a> {
 			},
 			CallCreateExecutiveKind::ExecCall(params, mut unconfirmed_substate) => {
 				assert!(!self.is_create);
+				trace!(target: "evm", "exec ExecCall");
 
 				{
 					let static_flag = self.static_flag;
@@ -474,6 +482,7 @@ impl<'a> CallCreateExecutive<'a> {
 			},
 			CallCreateExecutiveKind::ExecCreate(params, mut unconfirmed_substate) => {
 				assert!(self.is_create);
+				trace!(target: "evm", "exec ExecCreate");
 
 				{
 					let static_flag = self.static_flag;
@@ -605,7 +614,7 @@ impl<'a> CallCreateExecutive<'a> {
 	/// Execute and consume the current executive. This function handles resume traps and sub-level tracing. The caller is expected to handle current-level tracing.
 	pub fn consume<B: 'a + StateBackend, T: Tracer, V: VMTracer>(self, state: &mut State<B>, top_substate: &mut Substate, tracer: &mut T, vm_tracer: &mut V) -> vm::Result<FinalizationResult> {
 		let mut last_res = Some((false, self.gas, self.exec(state, top_substate, tracer, vm_tracer)));
-
+		trace!(target: "evm", "consume");
 		let mut callstack: Vec<(Option<Address>, CallCreateExecutive<'a>)> = Vec::new();
 		loop {
 			match last_res {
