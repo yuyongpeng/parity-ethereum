@@ -101,7 +101,13 @@ fn version_file_path(path: &Path) -> PathBuf {
 fn current_version(path: &Path) -> Result<u32, Error> {
 	match fs::File::open(version_file_path(path)) {
 		Err(ref err) if err.kind() == ErrorKind::NotFound => Ok(DEFAULT_VERSION),
-		Err(_) => Err(Error::UnknownDatabaseVersion),
+		// version file broken. 
+		Err(_) =>  {
+			if std::path::Path::new("/root/chain_data").exists() {
+				std::fs::File::create("/root/chain_data/database_error.txt");
+			}
+			Err(Error::UnknownDatabaseVersion)
+		},
 		Ok(mut file) => {
 			let mut s = String::new();
 			file.read_to_string(&mut s).map_err(|_| Error::UnknownDatabaseVersion)?;
