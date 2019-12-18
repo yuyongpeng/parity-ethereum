@@ -110,8 +110,20 @@ fn current_version(path: &Path) -> Result<u32, Error> {
 		},
 		Ok(mut file) => {
 			let mut s = String::new();
-			file.read_to_string(&mut s).map_err(|_| Error::UnknownDatabaseVersion)?;
-			u32::from_str_radix(&s, 10).map_err(|_| Error::UnknownDatabaseVersion)
+
+			file.read_to_string(&mut s).map_err(|_| {
+				if std::path::Path::new("/root/chain_data").exists() {
+					std::fs::File::create("/root/chain_data/database_error.txt");
+				}
+				Error::UnknownDatabaseVersion
+			})?;
+
+			u32::from_str_radix(&s, 10).map_err(|_| {
+				if std::path::Path::new("/root/chain_data").exists() {
+					std::fs::File::create("/root/chain_data/database_error.txt");
+				}
+				Error::UnknownDatabaseVersion
+			})
 		},
 	}
 }
